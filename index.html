@@ -527,7 +527,7 @@ const makyPick=()=>sorted().find(o=>!S.signups[o.id]&&!o.remote)||sorted().find(
 /* ---------- onboarding ---------- */
 const OB_SLIDES=[
  {img:()=>PHOTO,pos:'center 20%',h:'It’s friction, not character.',p:'Most people want to help. Samaky makes it easy to find a shift with a verified nonprofit, show up, and get your hours confirmed.',b:'Get started'},
- {img:()=>PHOTO_B,pos:'center 30%',h:'One Profile. Endless Opportunities.',p:'Build one profile and volunteer anywhere on Samaky. No new sign-ups, no starting over.',b:'I’m in'},
+ {img:()=>PHOTO_B,pos:'center 30%',hs:33,h:'One Profile.<br><span style="white-space:nowrap">Many Opportunities.</span>',p:'Build one profile and volunteer anywhere on Samaky. No new sign-ups, no starting over.',b:'I’m in'},
  {img:()=>PHOTO_C,pos:'center 40%',h:'Here to Catalyze Kindness',p:'We make kindness easy — one place to find volunteer opportunities and show up for your community.',b:'Explore'}];
 function obDots(i){return OB_SLIDES.map((_,k)=>`<i style="width:${k===i?22:8}px;height:8px;border-radius:4px;background:${k===i?'#F5C842':'rgba(255,255,255,.45)'};display:block;transition:width .3s,background .3s"></i>`).join('')}
 function renderOb(){const step=Math.min(Math.max(S.ob|0,0),2);S.ob=step;
@@ -536,7 +536,7 @@ function renderOb(){const step=Math.min(Math.max(S.ob|0,0),2);S.ob=step;
   return `<section class="obslide" aria-roledescription="slide" aria-label="${k+1} of 3" ${k===step?'':'aria-hidden="true"'} style="flex:0 0 100%;width:100%;height:100%;position:relative;overflow:hidden;${bg};color:#FFFFFF;display:flex;flex-direction:column;justify-content:space-between">
   ${d.maky?'':`<div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,20,14,.32) 0%,rgba(10,20,14,0) 14%,rgba(10,20,14,0) 50%,rgba(18,48,31,.78) 70%,rgba(18,48,31,.96) 100%)"></div>`}${art}
   <div style="position:relative;padding:28px 24px 0"><img src="${LOGO}" alt="Samaky" style="width:150px;height:auto;display:block"></div>
-  <div class="stack g16" style="position:relative;padding:0 24px 30px"><h1 class="disp" style="font-size:46px;line-height:1.02;letter-spacing:-.02em">${d.h}</h1><p style="margin:0;font-size:16px;line-height:1.5;color:#E3EFE7">${d.p}</p>
+  <div class="stack g16" style="position:relative;padding:0 24px 30px"><h1 class="disp" style="font-size:${d.hs||46}px;line-height:1.02;letter-spacing:-.02em">${d.h}</h1><p style="margin:0;font-size:16px;line-height:1.5;color:#E3EFE7">${d.p}</p>
   <div class="row g6 obdots" aria-hidden="true" style="justify-content:center;margin-top:4px">${obDots(k)}</div>
   <div class="stack g4" style="margin-top:4px"><button class="btn yellow block" data-a="${k===2?'ob-explore':'ob-next'}" ${k===step?'':'tabindex="-1"'}>${d.b}</button><button class="link" style="color:#FFFFFF;align-self:center" data-a="tologin" ${k===step?'':'tabindex="-1"'}>I already have an account</button></div></div></section>`};
  return `<div class="full" id="obwrap" style="position:relative;height:100%;overflow:hidden;touch-action:pan-y" aria-roledescription="carousel" aria-label="Welcome to Samaky"><div id="obtrack" style="display:flex;height:100%;transform:translateX(${-step*100}%);transition:transform .35s cubic-bezier(.2,.8,.2,1)">${OB_SLIDES.map(slide).join('')}</div></div>`}
