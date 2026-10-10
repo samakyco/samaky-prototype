@@ -384,10 +384,13 @@ const SEED_RB=()=>[
  {id:'RB-1035',stu:'s3',shift:{title:'Homework help for newcomers',org:'New Neighbors Learning Center',date:'Oct 1'},type:'transit',amount:4.00,receipt:'',note:'Two light rail rides.',status:'paid',sub:'Oct 1'},
  {id:'RB-1044',stu:'s4',shift:{title:'Walk shelter dogs',org:'Second Chance Animal Rescue',date:'Oct 4'},type:'parking',amount:8.00,receipt:'',note:'',status:'submitted',sub:'Oct 5'}];
 
-const fresh=()=>({onboarded:false,ob:0,loggedOut:false,pendingAct:null,obErr:'',name:'',last:'',email:'',pName:'',pc:{},birth:'',causes:[],zip:'',gEmail:'',consent:'none',house:null,signups:{},adj:{},disputed:{},club:false,
+const TODAY=(()=>{const d=new Date();const s=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;return d.getFullYear()===2026?s:'2026-10-10'})();
+const TODAY_M=+TODAY.slice(5,7)-1;
+const START_CAUSES=['Hunger','Seniors','Learning'];
+const fresh=()=>({onboarded:false,ob:0,loggedOut:false,pendingAct:null,obErr:'',name:'',last:'',email:'',pName:'',pc:{},birth:'',causes:[...START_CAUSES],zip:'',gEmail:'',consent:'none',house:null,signups:{},adj:{},disputed:{},club:false,
  notifs:[{id:1,text:'Welcome to Samaky. Find your first shift to start earning verified hours.',icon:'star',go:'search',read:false,time:'Just now'}],
  others:[{id:'o1',name:'Jae K.',opp:'meals',hours:3,status:'pending'},{id:'o2',name:'Lia P.',opp:'meals',hours:3,status:'pending'},{id:'o3',name:'Sam T.',opp:'meals',hours:3,status:'pending'},{id:'o4',name:'Jae K.',opp:'proj-p2-1',hours:1.5,status:'signed'}],
- auth:null,loginSent:false,loginEmail:'',view:'home',prev:'home',detail:null,query:'',filters:{},cause:null,mode:'list',mapSel:null,sheet:null,np:false,celebrate:null,t0:null,tSignup:null,sawProfile:false,quizA:[],pendingSignup:null,resetArm:false,draft:{},formErr:'',npTab:'hours',chal:null,chPrev:'home',myOpps:SEED_OPPS(),challenges:SEED_CH(),pitches:SEED_PITCH(),causeOrder:null,customCauses:[],hiddenCauses:[],ai:{},causeV:null,causePrev:'home',joined:[],edu:'',schoolV:false,schTab:'overview',schAppr:{},schShared:false,schStudents:SEED_SCH(),schSel:null,myClubs:[],calM:9,calD:'2026-10-09',sMode:'opps',follow:[],reimb:SEED_RB()});
+ auth:null,loginSent:false,loginEmail:'',view:'home',prev:'home',detail:null,query:'',filters:{},cause:null,mode:'list',mapSel:null,sheet:null,np:false,celebrate:null,t0:null,tSignup:null,sawProfile:false,quizA:[],pendingSignup:null,resetArm:false,draft:{},formErr:'',npTab:'hours',chal:null,chPrev:'home',myOpps:SEED_OPPS(),challenges:SEED_CH(),pitches:SEED_PITCH(),causeOrder:[...START_CAUSES],customCauses:[],hiddenCauses:CAUSES.filter(c=>!START_CAUSES.includes(c)),ai:{},causeV:null,causePrev:'home',joined:[],edu:'',schoolV:false,schTab:'overview',schAppr:{},schShared:false,schStudents:SEED_SCH(),schSel:null,myClubs:[],calM:TODAY_M,calD:TODAY,sMode:'opps',follow:[],reimb:SEED_RB()});
 let S=fresh();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(fresh(),JSON.parse(raw));}catch(e){}
 S.sheet=null;S.resetArm=false;
@@ -705,7 +708,7 @@ function detailCTA(){const o=opp(S.detail);const s=S.signups[o.id];
 function shiftRow(o,s){const action={signed:pcOf(o.id)==='approved'?`<button class="btn small" data-a="checkin" data-v="${o.id}">Check in</button>`:`<button class="btn small soft" data-a="pcview" data-v="${o.id}">Parent OK?</button>`,checked:`<button class="btn small soft" data-a="finish" data-v="${o.id}">Finish shift</button>`,notverified:S.disputed[o.id]?statusChip(s):`<button class="btn small ghost" data-a="dispute" data-v="${o.id}">Ask to review</button>`}[s]||statusChip(s);
  return `<div class="box row g12" style="padding:14px 16px"><span style="width:8px;align-self:stretch;border-radius:4px;background:${CAUSE[o.cause].fg};flex:0 0 8px"></span><button class="stack g4" style="flex:1;min-width:0;text-align:left;background:none;border:none;padding:0" data-a="open" data-v="${o.id}"><b>${o.title}</b><span class="sm q">${o.day} · ${s==='verified'||s==='pending'?fmt(hrs(o.id))+' hrs':o.time}</span><span class="sm q">${o.org}</span></button>${action}</div>`}
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-const TODAY='2026-10-09';
+
 function vCalendar(){const ids=Object.keys(S.signups);const by=st=>ids.filter(k=>st.includes(S.signups[k])).map(opp).filter(Boolean);
  const up=by(['signed','checked']),pend=by(['pending']),done=by(['verified','notverified']);
  const sec=(t,list,extra='')=>list.length?`<section class="stack g10"><h2 class="disp h2">${t}</h2>${extra}${list.map(o=>shiftRow(o,S.signups[o.id])).join('')}</section>`:'';
@@ -722,7 +725,7 @@ function vCalendar(){const ids=Object.keys(S.signups);const by=st=>ids.filter(k=
  return `${pageHead('Calendar')}<div class="stack g12 pad" style="padding-top:16px">
  <div class="box stack g10" style="padding:12px 12px 14px"><div class="row between"><button class="iconbtn" aria-label="Previous month" data-a="calmonth" data-v="-1" ${m===0?'disabled':''}>${ic('back',18,2.4)}</button><b style="font-size:16px">${MONTHS[m]} 2026</b><button class="iconbtn" aria-label="Next month" data-a="calmonth" data-v="1" ${m===11?'disabled':''}><span style="display:flex;transform:scaleX(-1)">${ic('back',18,2.4)}</span></button></div>
   <div class="cgrid">${['S','M','T','W','T','F','S'].map(w=>`<span class="xs q" style="text-align:center;font-weight:700">${w}</span>`).join('')}${cells.join('')}</div>
-  <div class="row g12 xs q" style="justify-content:center;flex-wrap:wrap"><span class="row g4"><i class="cdot" style="background:var(--brand)"></i>Your shift</span><span class="row g4"><i class="cdot" style="background:#E8B23A"></i>Open shifts</span><span class="row g4"><i class="cdot" style="background:#9A9284"></i>Done</span>${m!==9?'<button class="link" style="padding:0;min-height:0;font-size:12px" data-a="caltoday">Today</button>':''}</div></div></div>
+  <div class="row g12 xs q" style="justify-content:center;flex-wrap:wrap"><span class="row g4"><i class="cdot" style="background:var(--brand)"></i>Your shift</span><span class="row g4"><i class="cdot" style="background:#E8B23A"></i>Open shifts</span><span class="row g4"><i class="cdot" style="background:#9A9284"></i>Done</span>${m!==TODAY_M||S.calD!==TODAY?'<button class="link" style="padding:0;min-height:0;font-size:12px" data-a="caltoday">Today</button>':''}</div></div></div>
  <div class="stack g20 pad" style="padding-block:16px 110px">
  <section class="stack g10"><h2 class="disp h2" style="font-size:18px">${selLabel}</h2>${selMine.map(o=>shiftRow(o,S.signups[o.id])).join('')}${selOpen.slice(0,3).map(o=>`<button class="box row g12" style="padding:10px 12px;text-align:left" data-a="open" data-v="${o.id}"><div style="width:48px;height:48px;border-radius:12px;overflow:hidden;flex:0 0 48px">${art(o.cause)}</div><span class="stack g4" style="flex:1;min-width:0"><b style="font-size:14px">${esc(o.title)}</b><span class="xs q">${o.time.split(' – ')[0]} · ${esc(o.org)}</span></span><span class="xp">+${o.hours*100}</span></button>`).join('')}${!selMine.length&&!selOpen.length?`<div class="box row g12" style="padding:14px 16px"><span class="sm q" style="flex:1">Nothing on this day yet.</span><button class="btn small soft" data-a="nav" data-v="search">Find a shift</button></div>`:''}</section>
  ${sec('Coming up',up)}${sec('Waiting for the nonprofit',pend,'<p class="sm q" style="margin:0">Nonprofits usually verify within a few days. We remind them at 24 hours and 7 days.</p>')}${sec('Done',done)}
@@ -1148,9 +1151,9 @@ const A={
  smode(v){S.sMode=v;S.mapSel=null},
  npprofile(v){S.sheet={t:'npp',id:v}},
  npfollow(v){if(S.follow.includes(v)){S.follow=S.follow.filter(x=>x!==v);toast('Unfollowed')}else{S.follow.push(v);toast(`Following ${v}`)}},
- calmonth(v){S.calM=Math.min(11,Math.max(0,S.calM+ +v));S.calD=`2026-${String(S.calM+1).padStart(2,'0')}-01`;if(S.calM===9)S.calD=TODAY},
+ calmonth(v){S.calM=Math.min(11,Math.max(0,S.calM+ +v));S.calD=`2026-${String(S.calM+1).padStart(2,'0')}-01`;if(S.calM===TODAY_M)S.calD=TODAY},
  calday(v){S.calD=v},
- caltoday(){S.calM=9;S.calD=TODAY},
+ caltoday(){S.calM=TODAY_M;S.calD=TODAY},
  qr(){S.sheet={t:'qr'}},
  stageinfo(v){S.sheet={t:'stage',id:v}},
  lotusinfo(){S.sheet={t:'lotus'}},
