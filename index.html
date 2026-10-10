@@ -91,8 +91,8 @@ h1,h2,h3{text-wrap:balance}
 .tabbar{position:absolute;left:0;right:0;bottom:0;height:var(--tabh);background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:flex-start;padding:8px 6px 0;z-index:5}
 .tab{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px;min-height:48px;background:none;border:none;color:var(--quiet);font-size:11px;font-weight:500;position:relative}
 .tab[aria-current="page"]{color:var(--green);font-weight:700}
-.tab.center{margin-top:-10px;justify-content:center}
-.tab.center .ball{width:54px;height:54px;border-radius:27px;background:var(--green);color:var(--on-dark);display:flex;align-items:center;justify-content:center}
+.tab.center{margin-top:-26px;justify-content:flex-start}
+.tab.center .ball{width:62px;height:62px;border-radius:31px;box-shadow:0 0 0 4px var(--surface);background:var(--green);color:var(--on-dark);display:flex;align-items:center;justify-content:center}
 .dot{position:absolute;top:-2px;left:50%;margin-left:6px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--alert);color:var(--on-dark);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .fab{position:absolute;right:16px;bottom:calc(var(--tabh) + 16px);width:64px;height:64px;border-radius:32px;border:3px solid var(--surface);background:var(--yellow-soft);padding:0;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(26,26,26,.2);z-index:6}
 .maky{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--yellow-soft);overflow:hidden;flex:0 0 auto}
@@ -520,7 +520,7 @@ const stp=(k,l,step,min,max,unit)=>`<div class="field"><span class="flbl">${l}</
 const segf=(k,l,opts)=>`<div class="field"><span class="flbl">${l}</span><div class="seg" role="group" aria-label="${l}" style="align-self:flex-start">${opts.map(([v,t])=>`<button type="button" aria-pressed="${S.draft[k]===v}" data-a="dset" data-v="${k}|${v}">${t}</button>`).join('')}</div></div>`;
 const ferr=()=>S.formErr?`<p class="err" role="alert" style="margin:0">${esc(S.formErr)}</p>`:'';
 function tabbar(){const t=(v,n,l)=>`<button class="tab" data-a="nav" data-v="${v}" ${S.view===v?'aria-current="page"':''}>${ic(n)}${l}</button>`;const u=unread();
- return `<nav class="tabbar" aria-label="Main navigation">${t('home','home','Home')}${t('calendar','cal','Calendar')}<button class="tab center" data-a="nav" data-v="search" aria-label="Search" ${S.view==='search'?'aria-current="page"':''}><span class="ball">${ic('search',26,2)}</span></button><button class="tab" data-a="nav" data-v="alerts" ${S.view==='alerts'?'aria-current="page"':''}>${ic('bell')}${u?`<span class="dot">${u}</span>`:''}Alerts</button>${t('profile','user','Profile')}</nav>`}
+ return `<nav class="tabbar" aria-label="Main navigation">${t('home','home','Home')}${t('calendar','cal','Calendar')}<button class="tab center" data-a="nav" data-v="search" aria-label="Search" ${S.view==='search'?'aria-current="page"':''}><span class="ball">${ic('search',29,2.2)}</span></button><button class="tab" data-a="nav" data-v="alerts" ${S.view==='alerts'?'aria-current="page"':''}>${ic('bell')}${u?`<span class="dot">${u}</span>`:''}Alerts</button>${t('profile','user','Profile')}</nav>`}
 const sorted=()=>[...OPPS].sort((a,b)=>(S.causes.includes(b.cause)-S.causes.includes(a.cause))||a.dist-b.dist);
 const makyPick=()=>sorted().find(o=>!S.signups[o.id]&&!o.remote)||sorted().find(o=>!S.signups[o.id]);
 
