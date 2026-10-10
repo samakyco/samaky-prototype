@@ -528,7 +528,7 @@ const makyPick=()=>sorted().find(o=>!S.signups[o.id]&&!o.remote)||sorted().find(
 const OB_SLIDES=[
  {img:()=>PHOTO,pos:'center 20%',h:'It’s friction, not character.',p:'Most people want to help. Samaky makes it easy to find a shift with a verified nonprofit, show up, and get your hours confirmed.',b:'Get started'},
  {img:()=>PHOTO_B,pos:'center 30%',h:'One Profile.<br><span style="white-space:nowrap">Many Matches.</span>',p:'Build one profile and volunteer anywhere on Samaky. No new sign-ups, no starting over.',b:'I’m in'},
- {img:()=>PHOTO_C,pos:'center 40%',h:'Here to Catalyze Kindness',p:'We make kindness easy — one place to find volunteer opportunities and show up for your community.',b:'Explore'}];
+ {img:()=>PHOTO_C,pos:'center 40%',h:'Catalyze Kindness',p:'We make kindness easy — one place to find volunteer opportunities and show up for your community.',b:'Explore Now'}];
 function obDots(i){return OB_SLIDES.map((_,k)=>`<i style="width:${k===i?22:8}px;height:8px;border-radius:4px;background:${k===i?'#F5C842':'rgba(255,255,255,.45)'};display:block;transition:width .3s,background .3s"></i>`).join('')}
 function renderOb(){const step=Math.min(Math.max(S.ob|0,0),2);S.ob=step;
  const slide=(d,k)=>{const bg=d.maky?'background:linear-gradient(180deg,#2F6E46 0%,#1F4D33 62%,#12301F 100%)':`background:#1A1A1A url('${d.img()}') ${d.pos}/cover no-repeat`;
