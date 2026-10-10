@@ -72,6 +72,13 @@ h1,h2,h3{text-wrap:balance}
 .corpscroll::-webkit-scrollbar{display:none}
 .phead{position:sticky;top:0;z-index:8;background:rgba(245,240,232,.96);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);padding-bottom:10px;border-bottom:1px solid var(--line);transition:border-color .2s}
 .phead.stuck{border-bottom-color:var(--line)}
+.ctile{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:84px;padding:10px 6px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;transition:background .15s,border-color .15s}
+.ctile .cic{width:36px;height:36px;border-radius:18px;background:var(--cream);display:flex;align-items:center;justify-content:center}
+.ctile .cnm{font-size:12.5px;font-weight:600;line-height:1.2;text-align:center;overflow-wrap:anywhere}
+.ctile.on{background:var(--green-deep);border-color:var(--green-deep);color:#FFFFFF}
+.ctile.on .cic{background:rgba(255,255,255,.14);color:#FFFFFF}
+.ctile .cck{position:absolute;top:6px;right:6px;width:18px;height:18px;border-radius:9px;background:var(--mint);color:var(--green-deep);display:flex;align-items:center;justify-content:center}
+.ctile.add{border-style:dashed;color:var(--green)}
 .hscroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .hscroll::-webkit-scrollbar{display:none}
 /* header */
@@ -954,11 +961,13 @@ function renderSheet(){const sh=S.sheet;if(!sh){lastSheet='';return ''}const sk=
   :`<div class="stack g16"><h2 class="disp" style="font-size:24px">Request a reimbursement</h2><p style="margin:0;line-height:1.5">You can request travel costs for shifts you’ve checked in to. Check in at your next shift, then come back here.</p><button class="btn block" data-a="close">Got it</button></div>`}
  if(sh.t==='rbpdf'){const r=S.reimb.find(x=>x.id===sh.id);if(r)c=`<div class="stack g16"><div class="row between g8"><h2 class="disp" style="font-size:22px">Reimbursement form</h2>${rbChip(r.status)}</div>${rbForm(r)}<button class="btn block" data-a="rbdl">${ic('doc',18,2)} Download PDF</button>${close}</div>`}
  if(sh.t==='rbdeny'){c=`<div class="stack g16"><h2 class="disp" style="font-size:24px">Deny request</h2>${area('dr','Reason the student will see','e.g. Please attach the Lyft receipt and resubmit.',80)}${ferr()}<button class="btn block" data-a="rbdenysend">Deny and notify student</button>${close}</div>`}
- if(sh.t==='causes'){const list=myCauses();c=`<div class="stack g16"><div class="stack g4"><h2 class="disp" style="font-size:24px">Your causes</h2><span class="sm q" style="line-height:1.45">Move your favorites to the front. Maky uses them to pick shifts for you.</span></div>
-  <div class="box" style="overflow:hidden">${list.map((cn,i)=>`<div class="row g8" style="padding:8px 10px;${i?'border-top:1px solid var(--line)':''}"><span style="width:34px;height:34px;flex:0 0 34px;border-radius:17px;background:${(CAUSE[cn]||{}).fg||'#3E8957'};color:#FFFFFF;display:flex;align-items:center;justify-content:center">${ic(cn,18,2)}</span><b style="flex:1;font-size:14px;min-width:0;overflow-wrap:anywhere">${esc(cn)}</b><button class="iconbtn" aria-label="Move ${esc(cn)} earlier" data-a="cmove" data-v="${esc(cn)}|-1" ${i===0?'disabled':''}>${ic('up',16,2.4)}</button><button class="iconbtn" aria-label="Move ${esc(cn)} later" data-a="cmove" data-v="${esc(cn)}|1" ${i===list.length-1?'disabled':''}>${ic('down',16,2.4)}</button><button class="iconbtn" aria-label="Remove ${esc(cn)}" data-a="chide" data-v="${esc(cn)}">${ic('x',16,2.4)}</button></div>`).join('')}</div>
-  <div class="stack g8"><label class="flbl" for="f-nc">Add your own cause</label><div class="row g8"><input class="input" id="f-nc" data-f="nc" value="${esc(S.draft.nc??'')}" placeholder="e.g. Asian American community" style="flex:1;min-width:0"><button class="btn" style="flex:0 0 auto;padding:0 18px" data-a="cadd">Add</button></div>${ferr()}</div>
-  ${S.hiddenCauses.length?`<div class="stack g8"><span class="flbl">Add back</span><div class="row g8" style="flex-wrap:wrap">${S.hiddenCauses.map(h=>`<button class="pill" data-a="cshow" data-v="${esc(h)}">${ic('plus',14,2.4)} ${esc(h)}</button>`).join('')}</div></div>`:''}
-  <button class="btn block" data-a="close">Done</button></div>`}
+ if(sh.t==='causes'){const sel=S.draft.sel||[];const all=[...CAUSES,...S.customCauses.map(x=>x.n)];
+  c=`<div class="stack g16"><div class="stack g4"><h2 class="disp" style="font-size:24px">Your causes</h2><span class="sm q" style="line-height:1.45">Tap the causes you care about. Maky uses them to pick shifts for you.</span></div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">${all.map(cn=>{const on=sel.includes(cn);const col=(CAUSE[cn]||{}).fg||'#3E8957';
+   return `<button class="ctile${on?' on':''}" aria-pressed="${on}" data-a="ctog" data-v="${esc(cn)}"><span class="cic" style="${on?'':`color:${col}`}">${ic(cn,20,2)}</span><span class="cnm">${esc(cn)}</span>${on?`<span class="cck">${ic('check',11,3.4)}</span>`:''}</button>`}).join('')}
+   ${S.draft.addOpen?'':`<button class="ctile add" data-a="caddopen"><span class="cic">${ic('plus',20,2)}</span><span class="cnm">Add your own</span></button>`}</div>
+  ${S.draft.addOpen?`<div class="stack g8"><label class="flbl" for="f-nc">Add your own cause</label><div class="row g8"><input class="input" id="f-nc" data-f="nc" value="${esc(S.draft.nc??'')}" placeholder="e.g. Asian American community" style="flex:1;min-width:0"><button class="btn" style="flex:0 0 auto;padding:0 18px" data-a="cadd">Add</button></div></div>`:''}
+  <div class="stack g8" style="position:sticky;bottom:-28px;background:var(--surface);margin:0 -20px -28px;padding:12px 20px 24px;border-top:1px solid var(--line)">${ferr()}<button class="btn block" data-a="capply">${sel.length?`Apply · ${sel.length} cause${sel.length===1?'':'s'}`:'Pick at least one'}</button><button class="link q" style="align-self:center;text-decoration:none" data-a="close">Cancel</button></div></div>`}
  if(sh.t==='stu'){const st=allStu().find(x=>x.id===sh.id);if(st){const vh=st.recs.reduce((a,r)=>a+r.hours,0),ah=st.recs.filter(r=>r.status==='approved').reduce((a,r)=>a+r.hours,0);
   c=`<div class="stack g16 sch"><div class="row g12">${avP(st.name,50)}<div class="stack g4" style="min-width:0"><h2 class="disp" style="font-size:22px">${esc(st.name)}</h2><span class="xs q" style="overflow-wrap:anywhere">${esc(st.email)} · ${st.yr}</span></div></div>
   <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">${[[fmt(vh),'verified hrs'],[fmt(ah),'approved hrs'],[stageFor(vh),'Lotus stage']].map(([v,l])=>`<div class="box stack g4" style="padding:10px 12px"><span class="disp tnum" style="font-size:20px">${v}</span><span class="xs q">${l}</span></div>`).join('')}</div>
@@ -1080,13 +1089,17 @@ const A={
  causeback(){S.view=S.causePrev&&S.causePrev!=='cause'?S.causePrev:'home'},
  causesearch(){S.cause=S.causeV;go('search')},
  rematch(){startMatch(S.causeV,true)},
- causeedit(){S.formErr='';S.draft={nc:''};S.sheet={t:'causes'}},
+ causeedit(){S.formErr='';S.draft={nc:'',sel:myCauses(),addOpen:false};S.sheet={t:'causes'}},
+ ctog(v){const l=S.draft.sel||[];S.draft.sel=l.includes(v)?l.filter(x=>x!==v):[...l,v];S.formErr=''},
+ caddopen(){S.draft.addOpen=true;setTimeout(()=>{const e=document.getElementById('f-nc');if(e)e.focus()},50)},
+ capply(){const sel=S.draft.sel||[];if(!sel.length)return S.formErr='Pick at least one cause.';const all=[...CAUSES,...S.customCauses.map(x=>x.n)];S.hiddenCauses=all.filter(x=>!sel.includes(x));S.causeOrder=[...sel];S.causes=sel.filter(x=>CAUSES.includes(x));S.sheet=null;S.draft={};toast('Your causes are updated')},
  cmove(v){const i=v.lastIndexOf('|');const n=v.slice(0,i),d=+v.slice(i+1);const o=myCauses();const a=o.indexOf(n),b=a+d;if(a<0||b<0||b>=o.length)return;[o[a],o[b]]=[o[b],o[a]];S.causeOrder=o},
  chide(n){if(S.customCauses.some(x=>x.n===n))S.customCauses=S.customCauses.filter(x=>x.n!==n);else if(!S.hiddenCauses.includes(n))S.hiddenCauses.push(n);S.causeOrder=myCauses().filter(x=>x!==n)},
  cshow(n){S.hiddenCauses=S.hiddenCauses.filter(x=>x!==n);S.causeOrder=[...myCauses().filter(x=>x!==n),n]},
  cadd(){const n=(S.draft.nc||'').replace(/[|<>]/g,'').replace(/\s+/g,' ').trim();S.formErr='';if(n.length<2)return S.formErr='Type a cause, like “Asian American community”.';if(n.length>40)return S.formErr='Keep it under 40 characters.';
-  const ex=[...CAUSES,...S.customCauses.map(x=>x.n)].find(x=>x.toLowerCase()===n.toLowerCase());if(ex){S.hiddenCauses=S.hiddenCauses.filter(x=>x!==ex);S.causeOrder=[ex,...myCauses().filter(x=>x!==ex)];S.draft.nc='';return}
-  S.customCauses.push({n,c:CUSTOM_COLORS[S.customCauses.length%CUSTOM_COLORS.length]});ensureCauses();S.causeOrder=[n,...myCauses().filter(x=>x!==n)];S.draft.nc='';toast(`Added ${n}. Tap it to see Maky’s picks.`)},
+  const ex=[...CAUSES,...S.customCauses.map(x=>x.n)].find(x=>x.toLowerCase()===n.toLowerCase());const sel=S.draft.sel||[];
+  if(ex){if(!sel.includes(ex))S.draft.sel=[...sel,ex];}else{S.customCauses.push({n,c:CUSTOM_COLORS[S.customCauses.length%CUSTOM_COLORS.length]});ensureCauses();S.hiddenCauses=[...S.hiddenCauses.filter(x=>x!==n),n];S.draft.sel=[...sel,n]}
+  S.draft.nc='';S.draft.addOpen=false},
  clubnew(){S.formErr='';S.draft={kn:'',kc:myCauses()[0]||'Hunger',ka:'',ko:'open',kw:'student'};S.sheet={t:'club'}},
  clubsend(){const d=S.draft;S.formErr='';const n=(d.kn||'').trim();if(n.length<3)return S.formErr='Give your club a name.';if(allClubs().some(x=>x.n.toLowerCase()===n.toLowerCase()))return S.formErr='A club with that name already exists. Try another name.';if((d.ka||'').trim().length<15)return S.formErr='Say in a sentence what your club will do.';
   const id='u'+Date.now();const cr=d.kw==='creator';S.myClubs.push({id,n,causes:[d.kc],m:0,c:(CAUSE[d.kc]||{}).fg||'#3E8957',about:d.ka.trim(),mine:true,open:d.ko==='open',status:cr?'review':'live'});S.joined.push(id);S.sheet=null;S.draft={};
