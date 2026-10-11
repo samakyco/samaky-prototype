@@ -18,6 +18,9 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#1F4D33">
 <style>html,body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "yw5aimzm04");
+</script>
 </head>
 <body>
 <title>Samaky: Catalyzing Kindness</title>
@@ -604,7 +607,7 @@ function renderOb(){const step=Math.min(Math.max(S.ob|0,0),2);S.ob=step;
   <div style="position:relative;padding:28px 24px 0"><img src="${LOGO_W}" alt="Samaky" style="height:26px;width:auto;display:block"></div>
   <div class="stack g16" style="position:relative;padding:0 24px 30px"><h1 class="disp" style="font-size:${d.hs||46}px;line-height:1.02;letter-spacing:-.02em">${d.h}</h1><p style="margin:0;font-size:16px;line-height:1.5;color:#E3EFE7">${d.p}</p>
   <div class="row g6 obdots" aria-hidden="true" style="justify-content:center;margin-top:4px">${obDots(k)}</div>
-  <div class="stack g4" style="margin-top:4px"><button class="btn yellow block" data-a="${k===2?'ob-explore':'ob-next'}" ${k===step?'':'tabindex="-1"'}>${d.b}</button><button class="link" style="color:#FFFFFF;align-self:center" data-a="tologin" ${k===step?'':'tabindex="-1"'}>I already have an account</button></div></div></section>`};
+  <div class="stack g4" style="margin-top:4px"><button class="btn yellow block" data-a="${k===2?'ob-explore':'ob-next'}" ${k===step?'':'tabindex="-1"'}>${d.b}</button><button class="link" style="color:#FFFFFF;align-self:center" data-a="tologin" ${k===step?'':'tabindex="-1"'}>I already have an account</button>${k===2?'<p style="margin:2px 0 0;font-size:11px;line-height:1.4;text-align:center;color:rgba(255,255,255,.7)">This demo collects anonymous usage data to improve Samaky.</p>':''}</div></div></section>`};
  return `<div class="full" id="obwrap" style="position:relative;height:100%;overflow:hidden;touch-action:pan-y" aria-roledescription="carousel" aria-label="Welcome to Samaky"><div id="obtrack" style="display:flex;height:100%;transform:translateX(${-step*100}%);transition:transform .35s cubic-bezier(.2,.8,.2,1)">${OB_SLIDES.map(slide).join('')}</div></div>`}
 function obGo(i){i=Math.min(Math.max(i,0),2);S.ob=i;const t=document.getElementById('obtrack');if(!t){render();return}t.style.transition='transform .35s cubic-bezier(.2,.8,.2,1)';t.style.transform=`translateX(${-i*100}%)`;
  t.querySelectorAll('.obslide').forEach((el,k)=>{if(k===i)el.removeAttribute('aria-hidden');else el.setAttribute('aria-hidden','true');el.querySelectorAll('button').forEach(b=>{if(k===i)b.removeAttribute('tabindex');else b.setAttribute('tabindex','-1')})});save()}
@@ -703,7 +706,8 @@ function vCorp(){const c=corp(S.corp);const j=S.corpJoined&&S.corpJoined[c.id];c
  </div>`}
 function corpCTA(){const c=corp(S.corp);const j=S.corpJoined&&S.corpJoined[c.id];
  return `<div class="row g16" style="position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:14px 20px 22px;z-index:5"><div class="stack g4" style="flex:1;min-width:0"><b>Up to ${c.hrs} hrs</b><span class="sm q">Ends ${c.ends}</span></div>${j?'<span class="chip ok" style="font-size:14px;padding:10px 16px">✓ You’re in</span>':`<button class="btn" style="padding:0 38px;min-height:54px;font-size:17px" data-a="corpjoin" data-v="${c.id}">Sign Up</button>`}</div>`}
-function corpJoin(id){const c=corp(id);if(!S.corpJoined)S.corpJoined={};S.corpJoined[id]=true;notify(`You joined the ${c.sponsor} ${c.title}. Your verified hours with ${c.np.n} will count.`,'trophy','home');S.sheet={t:'corpok',id}}
+const trk=n=>{try{if(window.clarity)window.clarity('event',n)}catch(e){}};
+function corpJoin(id){trk('joined_corporate_challenge');const c=corp(id);if(!S.corpJoined)S.corpJoined={};S.corpJoined[id]=true;notify(`You joined the ${c.sponsor} ${c.title}. Your verified hours with ${c.np.n} will count.`,'trophy','home');S.sheet={t:'corpok',id}}
 
 /* ---------- recurring shifts + calendar sync ---------- */
 const TERM_END='2026-12-12';
@@ -1159,21 +1163,21 @@ function setRec(v,status,quiet){const i=v.indexOf('|');const sid=v.slice(0,i),ri
  if(sid==='me'){const k=rid.slice(3);S.schAppr[k]=status;const o=opp(k);if(o)notify(status==='approved'?`${SCHOOL.name} approved ${fmt(hrs(k))} hrs at ${o.org} for credit.`:`${SCHOOL.name} marked your shift at ${o.org} as not for credit.`,'check','profile');return}
  const st=S.schStudents.find(x=>x.id===sid);const r=st&&st.recs.find(x=>x.id===rid);if(r)r.status=status}
 function openAcct(p){S.pendingAct=p;S.formErr='';S.draft={an:'',al:'',ae:'',ab:''};S.sheet={t:'acct'}}
-function doSignup(id){S.signups[id]='signed';const o=opp(id);if(!S.tSignup)S.tSignup=Date.now();notify(`You’re in: ${o.title}, ${o.day}.`,'cal','calendar');requestConsent(id);S.sheet={t:'confirm',id};S.pendingSignup=null}
-function verifyMine(id){S.signups[id]='verified';const o=opp(id);notify(`${fmt(hrs(id))} hours verified by ${o.org}. +${Math.round(hrs(id)*100)} XP`,'check','profile');S.celebrate=id;nextSession(id)}
+function doSignup(id){trk('signed_up_shift');S.signups[id]='signed';const o=opp(id);if(!S.tSignup)S.tSignup=Date.now();notify(`You’re in: ${o.title}, ${o.day}.`,'cal','calendar');requestConsent(id);S.sheet={t:'confirm',id};S.pendingSignup=null}
+function verifyMine(id){trk('hours_verified');S.signups[id]='verified';const o=opp(id);notify(`${fmt(hrs(id))} hours verified by ${o.org}. +${Math.round(hrs(id)*100)} XP`,'check','profile');S.celebrate=id;nextSession(id)}
 const A={
  'ob-next'(){obGo(S.ob+1);return false},
- 'ob-explore'(){S.onboarded=true;S.ob=0;S.auth=null;S.sheet=null;S.view='home';S.t0=Date.now()},
+ 'ob-explore'(){trk('finished_intro');S.onboarded=true;S.ob=0;S.auth=null;S.sheet=null;S.view='home';S.t0=Date.now()},
  'ob-quiz'(){S.quizA=[];S.sheet={t:'quiz'}},
  'ob-finish'(){S.onboarded=true;S.sheet=null;S.view='home';S.t0=Date.now()},
  nav(v){go(v)},
  acctnew(){openAcct(null)},
  menuopen(){S.menu=true},
- serfreq(v){const[id,f]=v.split('|');if(f==='once'){delete S.series[id]}else{const old=S.series[id];S.series[id]={freq:f,len:old&&!old.count?old.len:'4'};toast(f==='weekly'?'Made it weekly. Added to your calendar.':'Every 2 weeks. Added to your calendar.')}},
+ serfreq(v){trk('made_shift_recurring');const[id,f]=v.split('|');if(f==='once'){delete S.series[id]}else{const old=S.series[id];S.series[id]={freq:f,len:old&&!old.count?old.len:'4'};toast(f==='weekly'?'Made it weekly. Added to your calendar.':'Every 2 weeks. Added to your calendar.')}},
  serlen(v){const[id,l]=v.split('|');if(S.series[id])S.series[id].len=l},
- nextweek(id){const o=opp(id);const nx=addDays(o.iso,7);const sr=S.series[id];if(sr&&!sr.count){sr.skip=(sr.skip||[]).filter(x=>x!==nx)}else S.series[id]={freq:'weekly',start:nx,count:1};notify(`You’re in again: ${o.title}, ${dLabel(nx)} at ${stT(o.time)}.`,'cal','calendar');toast('See you next week!')},
+ nextweek(id){trk('same_time_next_week');const o=opp(id);const nx=addDays(o.iso,7);const sr=S.series[id];if(sr&&!sr.count){sr.skip=(sr.skip||[]).filter(x=>x!==nx)}else S.series[id]={freq:'weekly',start:nx,count:1};notify(`You’re in again: ${o.title}, ${dLabel(nx)} at ${stT(o.time)}.`,'cal','calendar');toast('See you next week!')},
  calsync(){S.sheet={t:'calsync'}},
- calpick(v){if(v==='off'){S.calSync=null;S.sheet=null;toast('Calendar sync turned off');return}S.calSync=v;S.sheet=null;toast(`Synced. Your shifts will show up in ${v} automatically.`)},
+ calpick(v){trk('calendar_sync');if(v==='off'){S.calSync=null;S.sheet=null;toast('Calendar sync turned off');return}S.calSync=v;S.sheet=null;toast(`Synced. Your shifts will show up in ${v} automatically.`)},
  menuclose(){S.menu=false},
  mgo(v){S.menu=false;if(v==='profile')go('profile');if(v==='settings'){if(!['settings','info'].includes(S.view))S.setPrev=S.view;S.view='settings';S.sheet=null}if(v==='signin')openAcct(null);if(v==='reset')S.confirm='reset';if(v==='logout')A.logout()},
  confirmno(){S.confirm=null},
@@ -1188,7 +1192,7 @@ const A={
  corpall(){S.sheet={t:'corpall'}},
  corpback(){S.view=S.corpPrev&&S.corpPrev!=='corp'?S.corpPrev:'home'},
  corpjoin(v){if(!loggedIn()){openAcct({t:'corp',v});return}if(needParent()){S.pendingCorp=v;S.pendingSignup=null;S.formErr='';S.draft={gn:S.pName,ge:S.gEmail};S.sheet={t:'parent'};return}corpJoin(v)},
- acctsave(){const d=S.draft,t=k=>(d[k]||'').trim();const n=t('an'),l=t('al'),e=t('ae'),b=d.ab||'';
+ acctsave(){if(S.draft.an&&S.draft.ae)setTimeout(()=>{if(loggedIn())trk('created_account')},0);const d=S.draft,t=k=>(d[k]||'').trim();const n=t('an'),l=t('al'),e=t('ae'),b=d.ab||'';
   if(!n||!l)return S.formErr='Add your first and last name.';if(!/^\S+@\S+\.\S+$/.test(e))return S.formErr='Enter a valid email address.';if(!b)return S.formErr='Add your date of birth.';
   const old=S.birth;S.birth=b;const a=age();if(a<15){S.birth=old;return S.formErr='Samaky is for students 15 and older.'}if(a>100){S.birth=old;return S.formErr='Check the year on your date of birth.'}
   S.name=n;S.last=l;S.email=e;S.loggedOut=false;S.formErr='';S.draft={};S.sheet=null;if(/@[^@\s]+\.edu$/i.test(e))S.edu=e.toLowerCase();
@@ -1213,7 +1217,7 @@ const A={
  pcshare(){copy('https://samakian.com/consent/'+(S.name||'me').toLowerCase());toast('Consent link copied. Send it to your parent.')},
  consentsend(){const e=document.getElementById('g-mail').value.trim();if(!/^\S+@\S+\.\S+$/.test(e)){toast('Enter a valid email address');return false}S.gEmail=e;S.consent='pending';notify(`We asked ${e} to approve your account.`,'people','home')},
  consentok(){S.consent='approved';notify('Your guardian approved your account. You can sign up for shifts.','check','search');S.sheet=null;if(S.pendingSignup)doSignup(S.pendingSignup);else toast('Approved. You can sign up now.')},
- checkin(v){if(pcOf(v)!=='approved'){S.sheet={t:'parentmail',id:v};return}S.sheet={t:'checkin',id:v}},
+ checkin(v){trk('check_in_tapped');if(pcOf(v)!=='approved'){S.sheet={t:'parentmail',id:v};return}S.sheet={t:'checkin',id:v}},
  cimode(v){S.sheet={...S.sheet,m:v}},
  cidone(v){S.signups[v]='checked';S.sheet=null;toast('Checked in. Have a great shift!')},
  finish(v){S.signups[v]='pending';notify(`Your ${fmt(hrs(v))} hours at ${opp(v).org} are waiting for verification.`,'clock','calendar');toast('Hours sent to the nonprofit to verify')},
@@ -1240,7 +1244,7 @@ const A={
   const id='u'+Date.now();const cr=d.kw==='creator';S.myClubs.push({id,n,causes:[d.kc],m:0,c:(CAUSE[d.kc]||{}).fg||'#3E8957',about:d.ka.trim(),mine:true,open:d.ko==='open',status:cr?'review':'live'});S.joined.push(id);S.sheet=null;S.draft={};
   notify(cr?`${n} was sent to Samaky for review. We’ll let you know when it’s live.`:`${n} is live. Invite friends and sign up for group shifts together.`,cr?'clock':'people','profile');toast(cr?'Sent for review':`${n} created`)},
  clubjoin(v){const cl=allClubs().find(x=>x.id===v);if(!cl||S.joined.includes(v))return;S.joined.push(v);if(v==='green-thumbs')S.club=true;notify(`You joined ${cl.n}. Their group shifts will show up on Home.`,'people','home');toast(`Joined ${cl.n}`)},
- sch(){S.schoolV=true;S.np=false;S.sheet=null},
+ sch(){trk('opened_school_view');S.schoolV=true;S.np=false;S.sheet=null},
  schback(){S.schoolV=false;S.view='profile';S.sheet=null},
  schtab(v){S.schTab=v},
  schstu(v){S.sheet={t:'stu',id:v}},
