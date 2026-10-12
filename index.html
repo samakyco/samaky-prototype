@@ -455,11 +455,12 @@ const TODAY=(()=>{const d=new Date();const s=`${d.getFullYear()}-${String(d.getM
 const TODAY_M=+TODAY.slice(5,7)-1;
 const START_CAUSES=['Hunger','Seniors','Learning'];
 const fresh=()=>({cevents:[],samCode:null,pweb:null,clubH:[],audit:null,creator:{status:null},bonusH:0,adminV:false,admTab:'apps',apps:{marisol:'call',devon:'review'},series:{},calSync:null,menu:false,confirm:null,info:null,setPrev:null,set:{push:true,email:true,remind:true,board:true,share:true,dark:false,vis:'Public',lang:'English'},onboarded:false,ob:0,loggedOut:false,pendingAct:null,obErr:'',name:'',last:'',email:'',pName:'',pc:{},birth:'',causes:[...START_CAUSES],zip:'',gEmail:'',consent:'none',house:null,signups:{},adj:{},disputed:{},club:false,
- notifs:[{id:1,text:'Welcome to Samaky. Find your first shift to start earning verified hours.',icon:'star',go:'search',read:false,time:'Just now'}],
+ notifs:[{id:1,text:'Welcome to Samaky. Find your first shift to start earning verified hours.',icon:'star',go:'search',read:false,time:'Just now'},{id:2,text:'Curious what kind of giver you are? Take the Samaky giver personality test.',icon:'maky',link:'https://samaky.org/',read:false,time:'Just now'}],
  others:[{id:'o1',name:'Jae K.',opp:'meals',hours:3,status:'pending'},{id:'o2',name:'Lia P.',opp:'meals',hours:3,status:'pending'},{id:'o3',name:'Sam T.',opp:'meals',hours:3,status:'pending'},{id:'o4',name:'Jae K.',opp:'proj-p2-1',hours:1.5,status:'signed'}],
  auth:null,loginSent:false,loginEmail:'',view:'home',prev:'home',detail:null,query:'',filters:{},cause:null,mode:'list',mapSel:null,sheet:null,np:false,celebrate:null,t0:null,tSignup:null,sawProfile:false,quizA:[],pendingSignup:null,resetArm:false,draft:{},formErr:'',npTab:'hours',chal:null,chPrev:'home',myOpps:SEED_OPPS(),challenges:SEED_CH(),pitches:SEED_PITCH(),causeOrder:[...START_CAUSES],customCauses:[],hiddenCauses:CAUSES.filter(c=>!START_CAUSES.includes(c)),ai:{},causeV:null,causePrev:'home',joined:[],edu:'',schoolV:false,schTab:'overview',schAppr:{},schShared:false,schStudents:SEED_SCH(),schSel:null,myClubs:[],calM:TODAY_M,calD:TODAY,sMode:'opps',follow:[],reimb:SEED_RB()});
 let S=fresh();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(fresh(),JSON.parse(raw));}catch(e){}
+if(S.notifs&&!S.notifs.some(n=>n.id===2)){const w=S.notifs.findIndex(n=>n.id===1);S.notifs.splice(w<0?S.notifs.length:w+1,0,{id:2,text:'Curious what kind of giver you are? Take the Samaky giver personality test.',icon:'maky',link:'https://samaky.org/',read:false,time:'Just now'})}
 S.sheet=null;S.resetArm=false;
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
 
@@ -1077,7 +1078,7 @@ function vCalendar(){const ids=Object.keys(S.signups);const by=st=>ids.filter(k=
 
 /* ---------- alerts ---------- */
 function vAlerts(){return `${pageHead('Notifications')}${unread()?`<div class="row between pad" style="padding-top:14px"><span class="sm q">${unread()} unread</span><button class="link" style="padding:0;min-height:0" data-a="readall">Mark all as read</button></div>`:''}
- <div class="stack g10 pad" style="padding-block:16px 110px">${S.notifs.map(n=>`<button class="box row g12" style="padding:12px 14px;text-align:left;${n.read?'':'background:var(--surface);border-color:var(--brand)'}" data-a="notif" data-v="${n.id}">${n.icon==='maky'||n.icon==='star'?mk(40):`<span style="width:40px;height:40px;flex:0 0 40px;border-radius:20px;background:var(--mint-soft);color:var(--green-deep);display:flex;align-items:center;justify-content:center">${ic(n.icon||'bell',20,2)}</span>`}<span class="stack g4" style="flex:1;min-width:0"><span style="font-size:14px;line-height:1.35;font-weight:${n.read?400:700}">${esc(n.text)}</span><span class="xs q">${n.time}</span></span>${n.read?'':'<i style="width:10px;height:10px;border-radius:5px;background:var(--alert);flex:0 0 10px" aria-label="Unread"></i>'}</button>`).join('')}</div>`}
+ <div class="stack g10 pad" style="padding-block:16px 110px">${S.notifs.map(n=>`<button class="box row g12" style="padding:12px 14px;text-align:left;${n.read?'':'background:var(--surface);border-color:var(--brand)'}" data-a="notif" data-v="${n.id}">${n.icon==='maky'||n.icon==='star'?mk(40):`<span style="width:40px;height:40px;flex:0 0 40px;border-radius:20px;background:var(--mint-soft);color:var(--green-deep);display:flex;align-items:center;justify-content:center">${ic(n.icon||'bell',20,2)}</span>`}<span class="stack g4" style="flex:1;min-width:0"><span style="font-size:14px;line-height:1.35;font-weight:${n.read?400:700}">${esc(n.text)}</span><span class="xs q">${n.time}</span>${n.link?`<span class="xs" style="color:var(--green);font-weight:700">Take the test at samaky.org ↗</span>`:''}</span>${n.read?'':'<i style="width:10px;height:10px;border-radius:5px;background:var(--alert);flex:0 0 10px" aria-label="Unread"></i>'}</button>`).join('')}</div>`}
 
 /* ---------- profile ---------- */
 function vProfile(pv){if(!loggedIn()&&!pv)return vGuest();const st=stage(),h=totalH();const done=ver();
@@ -1651,7 +1652,7 @@ const A={
  joinclub(){S.club=true;if(!S.joined.includes('green-thumbs'))S.joined.push('green-thumbs');notify('You joined Green Thumbs. Your Hunger hours now count in the Fall Hunger Challenge.','people','home')},
  quiz(){S.quizA=[];S.sheet={t:'quiz'}},
  qans(v){S.quizA.push(+v);if(S.quizA.length===QUIZ.length){const c=[0,0,0,0];S.quizA.forEach(a=>c[a]++);S.house=HOUSES[c.indexOf(Math.max(...c))].n}},
- notif(v){const n=S.notifs.find(x=>String(x.id)===v);if(n){n.read=true;if(n.go){if(String(n.go).startsWith('chal:')){S.chPrev=S.view;S.chal=n.go.slice(5);S.view='challenge'}else go(n.go)}}},
+ notif(v){const n=S.notifs.find(x=>String(x.id)===v);if(n){n.read=true;if(n.link){trk('personality_test_opened');try{window.open(n.link,'_blank','noopener')}catch(e){}return}if(n.go){if(String(n.go).startsWith('chal:')){S.chPrev=S.view;S.chal=n.go.slice(5);S.view='challenge'}else go(n.go)}}},
  readall(){S.notifs.forEach(n=>n.read=true)},
  np(){trk('opened_nonprofit_view');ctag('opened_demo_view','yes');S.np=true;S.sheet=null},
  nptab(v){S.npTab=v},
