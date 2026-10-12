@@ -249,7 +249,6 @@ select.input{padding:0 10px;font-size:15px}
     </div>
     <button class="restart" id="restart" data-a="reset">Restart from the beginning</button>
   </div>
-  <aside class="tasks" id="tasks" aria-label="Test script"></aside>
 </div>
 
 <script>
@@ -623,7 +622,7 @@ function renderOb(){const step=Math.min(Math.max(S.ob|0,0),2);S.ob=step;
   <div class="row g6 obdots" aria-hidden="true" style="justify-content:center;margin-top:4px">${obDots(k)}</div>
   <div class="stack g4" style="margin-top:4px"><button class="btn yellow block" data-a="${k===2?'ob-explore':'ob-next'}" ${k===step?'':'tabindex="-1"'}>${d.b}</button><button class="link" style="color:#FFFFFF;align-self:center" data-a="tologin" ${k===step?'':'tabindex="-1"'}>I already have an account</button></div></div></section>`};
  return `<div class="full" id="obwrap" style="position:relative;height:100%;overflow:hidden;touch-action:pan-y" aria-roledescription="carousel" aria-label="Welcome to Samaky"><div id="obtrack" style="display:flex;height:100%;transform:translateX(${-step*100}%);transition:transform .35s cubic-bezier(.2,.8,.2,1)">${OB_SLIDES.map(slide).join('')}</div></div>`}
-function obGo(i){i=Math.min(Math.max(i,0),2);S.ob=i;const t=document.getElementById('obtrack');if(!t){render();return}t.style.transition='transform .35s cubic-bezier(.2,.8,.2,1)';t.style.transform=`translateX(${-i*100}%)`;
+function obGo(i){i=Math.min(Math.max(i,0),2);if(i>S.ob)trk('intro_slide_'+(i+1));S.ob=i;const t=document.getElementById('obtrack');if(!t){render();return}t.style.transition='transform .35s cubic-bezier(.2,.8,.2,1)';t.style.transform=`translateX(${-i*100}%)`;
  t.querySelectorAll('.obslide').forEach((el,k)=>{if(k===i)el.removeAttribute('aria-hidden');else el.setAttribute('aria-hidden','true');el.querySelectorAll('button').forEach(b=>{if(k===i)b.removeAttribute('tabindex');else b.setAttribute('tabindex','-1')})});save()}
 (function(){let x0=null,y0=0,dx=0,w=1,drag=false;
  document.addEventListener('pointerdown',e=>{const wr=e.target.closest&&e.target.closest('#obwrap');if(!wr)return;x0=e.clientX;y0=e.clientY;dx=0;drag=false;w=wr.getBoundingClientRect().width||1});
@@ -721,7 +720,8 @@ function vCorp(){const c=corp(S.corp);const j=S.corpJoined&&S.corpJoined[c.id];c
 function corpCTA(){const c=corp(S.corp);const j=S.corpJoined&&S.corpJoined[c.id];
  return `<div class="row g16" style="position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:14px 20px 22px;z-index:5"><div class="stack g4" style="flex:1;min-width:0"><b>Up to ${c.hrs} hrs</b><span class="sm q">Ends ${c.ends}</span></div>${j?'<span class="chip ok" style="font-size:14px;padding:10px 16px">✓ You’re in</span>':`<button class="btn" style="padding:0 38px;min-height:54px;font-size:17px" data-a="corpjoin" data-v="${c.id}">Sign Up</button>`}</div>`}
 const trk=n=>{try{if(window.clarity)window.clarity('event',n)}catch(e){}};
-function corpJoin(id){trk('joined_corporate_challenge');const c=corp(id);if(!S.corpJoined)S.corpJoined={};S.corpJoined[id]=true;notify(`You joined the ${c.sponsor} ${c.title}. Your verified hours with ${c.np.n} will count.`,'trophy','home');S.sheet={t:'corpok',id}}
+const ctag=(k,v)=>{try{if(window.clarity)window.clarity('set',k,String(v))}catch(e){}};
+function corpJoin(id){trk('joined_corporate_challenge');ctag('joined_challenge','yes');const c=corp(id);if(!S.corpJoined)S.corpJoined={};S.corpJoined[id]=true;notify(`You joined the ${c.sponsor} ${c.title}. Your verified hours with ${c.np.n} will count.`,'trophy','home');S.sheet={t:'corpok',id}}
 
 /* ---------- recurring shifts + calendar sync ---------- */
 const TERM_END='2026-12-12';
@@ -880,7 +880,7 @@ const link=(v,label,icon,val='')=>`<button class="srow" data-a="setopen" data-v=
 const choice=(k,label,icon,opts)=>`<div class="srow" style="flex-wrap:wrap;row-gap:10px"><span class="sic">${ic(icon,19,1.9)}</span><span style="flex:1;min-width:0">${label}</span><div class="seg" role="group" aria-label="${label}" style="flex:0 0 100%;display:flex">${opts.map(o=>`<button type="button" style="flex:1;padding:0 6px;white-space:nowrap" aria-pressed="${S.set[k]===o}" data-a="sset" data-v="${k}|${o}">${o}</button>`).join('')}</div></div>`;
 function vSettings(){const grp=(t,b)=>`<section class="stack g8"><h2 class="xs" style="margin:0;font-weight:700;letter-spacing:.08em;color:var(--quiet)">${t.toUpperCase()}</h2><div class="box sgroup">${b}</div></section>`;
  return `${subHead('Settings','setback')}<div class="stack g20 pad" style="padding-block:16px 40px">
- ${grp('Account',link('editprofile','Edit Profile','user')+link('email','Email & Password','mail')+link('school','Linked School or University','Learning',UST_RE.test(S.edu)?'St. Thomas':S.edu?'Linked':'Not linked'))}
+ ${grp('Account',link('editprofile','Edit Profile','user')+link('email','Email & Password','mail')+link('school','Linked School','Learning',UST_RE.test(S.edu)?'St. Thomas':S.edu?'Linked':'Not linked'))}
  ${grp('Notifications',tog('push','Push Notifications','bell')+tog('email','Email Updates','mail')+tog('remind','Challenge Reminders','trophy'))}
  ${grp('Privacy',choice('vis','Profile Visibility','eye',['Public','Clubs Only','Private'])+tog('board','Show Me on Leaderboards','trophy')+tog('share','Share Volunteer Hours with My School','Learning')+link('privacy','Privacy Policy','shield')+link('data','Data & Permissions','lock'))}
  ${grp('Preferences',choice('lang','Language','globe',['English','Español','Khmer','中文'])+tog('dark','Dark Mode','moon','Coming soon. Display only in this demo.'))}
@@ -888,7 +888,7 @@ function vSettings(){const grp=(t,b)=>`<section class="stack g8"><h2 class="xs" 
  <p class="xs q" style="margin:0;text-align:center">Settings in this demo are for display only.</p></div>`}
 const INFO={
  email:['Email & Password',()=>[`<div class="box stack g10" style="padding:16px"><span class="xs q">EMAIL</span><b>${loggedIn()?esc(S.email):'Not signed in'}</b></div>`,`<div class="box stack g10" style="padding:16px"><span class="xs q">PASSWORD</span><b>••••••••</b><span class="sm q">Samaky signs you in with a one-time link sent to your email, so there’s no password to remember.</span></div>`]],
- school:['Linked School or University',()=>[loggedIn()?eduSection():'<p style="margin:0;line-height:1.55">Create an account first, then link your school email (for example, name@stthomas.edu) so your school can see and approve your verified hours.</p>']],
+ school:['Linked School',()=>[loggedIn()?eduSection():'<p style="margin:0;line-height:1.55">Create an account first, then link your school email (for example, name@stthomas.edu) so your school can see and approve your verified hours.</p>']],
  privacy:['Privacy Policy',()=>['<p class="xs q" style="margin:0">Sample text for this demo. Last updated October 2026.</p>','<p style="margin:0;line-height:1.6"><b>What we collect.</b> Your name, email, date of birth, the causes you choose, and the shifts you sign up for and check in to.</p>','<p style="margin:0;line-height:1.6"><b>How we use it.</b> To match you with verified opportunities, confirm your hours with nonprofits, and, if you choose, share verified hours with your school.</p>','<p style="margin:0;line-height:1.6"><b>What we never do.</b> We never sell your data or show you ads based on it.</p>','<p style="margin:0;line-height:1.6"><b>Students under 18.</b> A parent or guardian approves each shift, and we collect only what’s needed to keep you safe.</p>','<p style="margin:0;line-height:1.6"><b>Your choices.</b> You can download or delete your data at any time from Settings.</p>']],
  data:['Data & Permissions',()=>[['Name and date of birth','To confirm your age and add your name to verified hours.'],['Email','To sign you in and send shift reminders.'],['Location (optional)','To show opportunities near you. Used only while the app is open.'],['Camera (optional)','To scan the QR code when you check in to a shift.'],['Check-ins and hours','So nonprofits can verify your hours and you can build your service record.'],['School email (optional)','So your school can approve hours for credit, only if you link it.']].map(([t,d])=>`<div class="box stack g4" style="padding:14px 16px"><b>${t}</b><span class="sm q" style="line-height:1.45">${d}</span></div>`).concat(['<p class="xs q" style="margin:0">Sample text for this demo.</p>'])],
  help:['Help Center',()=>[['How do I sign up for a shift?','Open any opportunity and tap Sign Up. If you don’t have an account yet, we’ll create one in a few seconds.'],['How are my hours verified?','Check in with Samaky when you arrive. The nonprofit confirms your attendance and your hours appear on your profile.'],['I’m under 18. What do I need?','A parent or guardian approves each shift by email. They don’t need an account.'],['Can my school see my hours?','Only if you link your school email. You can unlink it anytime.']].map(([q,a])=>`<div class="box stack g6" style="padding:14px 16px"><b>${q}</b><span class="sm" style="line-height:1.5">${a}</span></div>`)],
@@ -998,10 +998,9 @@ function vProfile(pv){if(!loggedIn()&&!pv)return vGuest();const st=stage(),h=tot
    <button class="row g10" style="background:var(--cream);border:none;border-radius:12px;padding:10px 12px;text-align:left;font-size:13px;color:var(--ink);position:relative;z-index:5" data-a="lotusinfo"><span style="color:var(--green);flex:0 0 auto">${ic('info',18,2)}</span><span style="flex:1;line-height:1.4"><b>What do the stages mean?</b></span></button></section>
   ${pcSection()}<section class="stack g10"><h2 class="disp h2">Badges</h2><div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">${badges.map(([i,l,on])=>`<div class="stack g6" style="align-items:center;text-align:center;opacity:${on?1:.45}"><span style="width:54px;height:54px;border-radius:27px;background:${on?'var(--mint-soft)':'var(--line)'};color:var(--green-deep);display:flex;align-items:center;justify-content:center">${ic(i)}</span><span class="xs">${l}</span></div>`).join('')}</div></section>
   <section class="stack g10"><h2 class="disp h2">Clubs &amp; Creators</h2>${S.joined.map(id=>allClubs().find(x=>x.id===id)).filter(Boolean).map(cl=>clubCard(cl)).join('')||'<div class="box sm q" style="padding:16px;line-height:1.45">You haven’t joined a club yet. Clubs volunteer together and their hours count for each member.</div>'}${clubStartBlock()}${creatorBlock()}</section>
-  ${eduSection()}<section class="stack g10"><h2 class="disp h2">Impact history</h2>${hist.length?`<div class="box" style="overflow:hidden">${hist.map((k,i)=>`<div class="row g12" style="padding:12px 14px;${i?'border-top:1px solid var(--line)':''}"><span class="stack g4" style="flex:1"><b style="font-size:14px">${opp(k).org}</b><span class="xs q">${opp(k).day} · ${fmt(hrs(k))} hrs</span></span>${statusChip(S.signups[k])}</div>`).join('')}</div>`:'<div class="box sm q" style="padding:16px">Your verified shifts will show up here.</div>'}</section>
+  <section class="stack g10"><h2 class="disp h2">Impact history</h2>${hist.length?`<div class="box" style="overflow:hidden">${hist.map((k,i)=>`<div class="row g12" style="padding:12px 14px;${i?'border-top:1px solid var(--line)':''}"><span class="stack g4" style="flex:1"><b style="font-size:14px">${opp(k).org}</b><span class="xs q">${opp(k).day} · ${fmt(hrs(k))} hrs</span></span>${statusChip(S.signups[k])}</div>`).join('')}</div>`:'<div class="box sm q" style="padding:16px">Your verified shifts will show up here.</div>'}</section>${eduSection()}
   <div class="row g10"><button class="btn" style="flex:1" data-a="transcript">${ic('doc',18,2)} Transcript</button><button class="btn ghost" data-a="share">${ic('share',18,2)} Share</button></div>
-  <button class="link q" style="align-self:center" data-a="quiz">${S.house?'Retake the Samakian quiz':'Find your House'}</button>
-  <button class="btn small ghost" style="align-self:center" data-a="logout">Log out</button>
+  <button class="btn" style="align-self:center;width:min(100%,240px);background:#C0392B;border-color:#C0392B;color:#FFFFFF" data-a="logout">Log out</button>
   <section class="box stack g10" style="padding:16px;border-style:dashed"><b class="sm">Prototype controls</b><button class="btn small soft block" data-a="sch">Switch to school view</button><button class="btn small soft block" data-a="np">Switch to nonprofit view</button><button class="btn small soft block" data-a="adm">Switch to Samaky admin view</button><button class="btn small ghost block" data-a="demohrs">${S.bonusH?'Demo: remove the 66 bonus hours':'Demo: give me 66 hours'}</button>${isSamakor()?'':'<button class="btn small ghost block" data-a="demosam">Demo: make me a Samakor</button>'}<button class="btn small ghost block" data-a="reset">${S.resetArm?'Tap again to erase everything':'Reset demo'}</button></section>
  </div>`}
 
@@ -1339,7 +1338,6 @@ function renderTasks(){const ids=Object.values(S.signups);const t=[
  ['Find your new hours and Lotus progress',S.sawProfile],
  ['Pitch a project for the senior housing challenge',S.pitches.some(p=>p.mine)],
  ['Link a @stthomas.edu email, then approve your hours in the school view',Object.values(S.schAppr).includes('approved')]];
- document.getElementById('tasks').innerHTML=`<h2>Test script</h2><p class="q" style="margin:0;line-height:1.5;font-size:14px">Hand the phone to a student and give them one task at a time. Watch where they pause, and don’t help.</p><ol>${t.map(([l,d,n])=>`<li class="${d?'done':''}"><span class="tick">${d?ic('check',14,3):''}</span><span class="stack g4"><span>${l}</span>${n?`<b class="xs" style="color:var(--green)">${n}</b>`:''}</span></li>`).join('')}</ol><button class="btn small ghost" data-a="reset">${S.resetArm?'Tap again to erase everything':'Reset demo'}</button><p class="xs q" style="margin:0">Progress is saved in this browser only.</p>`;
  document.getElementById('restart').textContent=S.resetArm?'Tap again to restart':'Restart from the beginning'}
 function fit(){const d=document.getElementById('device');if(matchMedia('(max-width:500px) and (pointer:coarse)').matches){d.style.removeProperty('--s');return}
  const s=Math.max(.5,Math.min(1,(innerHeight-48-54)/844,(innerWidth-32)/390));d.style.setProperty('--s',s.toFixed(3))}
@@ -1358,7 +1356,7 @@ function setRec(v,status,quiet){const i=v.indexOf('|');const sid=v.slice(0,i),ri
  if(sid==='me'){const k=rid.slice(3);S.schAppr[k]=status;const o=opp(k);if(o)notify(status==='approved'?`${SCHOOL.name} approved ${fmt(hrs(k))} hrs at ${o.org} for credit.`:`${SCHOOL.name} marked your shift at ${o.org} as not for credit.`,'check','profile');return}
  const st=S.schStudents.find(x=>x.id===sid);const r=st&&st.recs.find(x=>x.id===rid);if(r)r.status=status}
 function openAcct(p){S.pendingAct=p;S.formErr='';S.draft={an:'',al:'',ae:'',ab:''};S.sheet={t:'acct'}}
-function doSignup(id){trk('signed_up_shift');S.signups[id]='signed';const o=opp(id);if(!S.tSignup)S.tSignup=Date.now();notify(`You’re in: ${o.title}, ${o.day}.`,'cal','calendar');requestConsent(id);S.sheet={t:'confirm',id};S.pendingSignup=null}
+function doSignup(id){trk('signed_up_shift');if(!Object.values(S.signups).some(v=>v&&v!=='cancelled')){trk('first_shift_signup');ctag('signed_up_shift','yes');if(S.t0){const sec=Math.round((Date.now()-S.t0)/1000);ctag('time_to_first_shift',sec<60?'under 1 min':sec<180?'1-3 min':sec<600?'3-10 min':'10+ min')}}S.signups[id]='signed';const o=opp(id);if(!S.tSignup)S.tSignup=Date.now();notify(`You’re in: ${o.title}, ${o.day}.`,'cal','calendar');requestConsent(id);S.sheet={t:'confirm',id};S.pendingSignup=null}
 function verifyMine(id){trk('hours_verified');S.signups[id]='verified';const o=opp(id);notify(`${fmt(hrs(id))} hours verified by ${o.org}. +${Math.round(hrs(id)*100)} XP`,'check','profile');S.celebrate=id;nextSession(id)}
 const A={
  'ob-next'(){obGo(S.ob+1);return false},
@@ -1366,9 +1364,9 @@ const A={
  'ob-quiz'(){S.quizA=[];S.sheet={t:'quiz'}},
  'ob-finish'(){S.onboarded=true;S.sheet=null;S.view='home';S.t0=Date.now()},
  nav(v){go(v)},
- acctnew(){openAcct(null)},
+ acctnew(){trk('opened_sign_up');openAcct(null)},
  menuopen(){S.menu=true},
- adm(){S.adminV=true;S.np=false;S.schoolV=false;S.sheet=null;S.admTab='apps';trk('opened_admin_view')},
+ adm(){S.adminV=true;S.np=false;S.schoolV=false;S.sheet=null;S.admTab='apps';trk('opened_admin_view');ctag('opened_demo_view','yes')},
  admback(){S.adminV=false;S.view='profile';S.sheet=null},
  admtab(v){S.admTab=v},
  admcall(v){if(v==='me')S.creator.status='call';else S.apps[v]='call';toast('Call scheduled')},
@@ -1455,21 +1453,21 @@ const A={
  stog(v){S.set[v]=!S.set[v]},
  sset(v){const i=v.indexOf('|');S.set[v.slice(0,i)]=v.slice(i+1)},
  avpick(){const i=document.getElementById('f-av');if(i)i.click();return false},
- corp(v){if(S.view!=='corp')S.corpPrev=S.view;S.view='corp';S.corp=v;S.sheet=null},
+ corp(v){trk('viewed_corporate_challenge');if(S.view!=='corp')S.corpPrev=S.view;S.view='corp';S.corp=v;S.sheet=null},
  corpall(){S.sheet={t:'corpall'}},
  corpback(){S.view=S.corpPrev&&S.corpPrev!=='corp'?S.corpPrev:'home'},
  corpjoin(v){if(!loggedIn()){openAcct({t:'corp',v});return}if(needParent()){S.pendingCorp=v;S.pendingSignup=null;S.formErr='';S.draft={gn:S.pName,ge:S.gEmail};S.sheet={t:'parent'};return}corpJoin(v)},
- acctsave(){if(S.draft.an&&S.draft.ae)setTimeout(()=>{if(loggedIn())trk('created_account')},0);const d=S.draft,t=k=>(d[k]||'').trim();const n=t('an'),l=t('al'),e=t('ae'),b=d.ab||'';
+ acctsave(){if(S.draft.an&&S.draft.ae)setTimeout(()=>{if(loggedIn()){trk('created_account');ctag('has_account','yes')}},0);const d=S.draft,t=k=>(d[k]||'').trim();const n=t('an'),l=t('al'),e=t('ae'),b=d.ab||'';
   if(!n||!l)return S.formErr='Add your first and last name.';if(!/^\S+@\S+\.\S+$/.test(e))return S.formErr='Enter a valid email address.';if(!b)return S.formErr='Add your date of birth.';
   const old=S.birth;S.birth=b;const a=age();if(a<15){S.birth=old;return S.formErr='Samaky is for students 15 and older.'}if(a>100){S.birth=old;return S.formErr='Check the year on your date of birth.'}
   S.name=n;S.last=l;S.email=e;S.loggedOut=false;S.formErr='';S.draft={};S.sheet=null;if(/@[^@\s]+\.edu$/i.test(e))S.edu=e.toLowerCase();
   const p=S.pendingAct;S.pendingAct=null;toast(`Welcome to Samaky, ${n}!`);
   if(p&&p.t==='signup'){A.signup(p.v)}else if(p&&p.t==='corp'){A.corpjoin(p.v)}else if(p&&p.t==='npfollow'){if(!S.follow.includes(p.v))S.follow.push(p.v);S.sheet={t:'npp',id:p.v};toast(`Following ${p.v}`)}else if(p&&p.t==='npdonate'){A.npdonate(p.v)}else if(p&&p.t==='pitch'){A.pitch()}},
- tologin(){S.sheet=null;S.menu=false;S.auth='login';S.loginEmail=S.email||S.loginEmail;S.loginSent=false;S.obErr=''},
+ tologin(){trk('opened_log_in');S.sheet=null;S.menu=false;S.auth='login';S.loginEmail=S.email||S.loginEmail;S.loginSent=false;S.obErr=''},
  loginback(){S.auth=null;S.obErr=''},
  loginsend(){const e=document.getElementById('li-email').value.trim();if(!/^\S+@\S+\.\S+$/.test(e)){S.obErr='Enter a valid email address.';return}S.obErr='';S.loginEmail=e;S.loginSent=true},
- loginok(){S.loginSent=false;S.auth=null;if(S.name&&S.email){S.loggedOut=false;S.onboarded=true;S.view='home';toast(`Welcome back, ${S.name}`)}else{S.ob=0;toast('No account on this phone yet. Tap Explore, then Sign Up on any opportunity.')}},
- logout(){S.loggedOut=true;S.onboarded=true;S.auth=null;S.menu=false;S.sheet=null;S.np=false;S.schoolV=false;S.view='home';toast('You’re signed out. Browsing as a guest.')},
+ loginok(){S.loginSent=false;S.auth=null;if(S.name&&S.email){S.loggedOut=false;S.onboarded=true;S.view='home';trk('logged_in');ctag('has_account','yes');toast(`Welcome back, ${S.name}`)}else{S.ob=0;toast('No account on this phone yet. Tap Explore, then Sign Up on any opportunity.')}},
+ logout(){trk('logged_out');S.loggedOut=true;S.onboarded=true;S.auth=null;S.menu=false;S.sheet=null;S.np=false;S.schoolV=false;S.view='home';toast('You’re signed out. Browsing as a guest.')},
  open(v){if(S.view!=='detail')S.prev=S.view;S.view='detail';S.detail=v;S.sheet=null},
  back(){S.view=S.prev&&S.prev!=='detail'?S.prev:'home'},
  signup(v){if(!loggedIn()){openAcct({t:'signup',v});return}if(needParent()){S.pendingSignup=v;S.formErr='';S.draft={gn:S.pName,ge:S.gEmail};S.sheet={t:'parent'};return}doSignup(v)},
@@ -1511,7 +1509,7 @@ const A={
   const id='u'+Date.now();const cr=false;S.myClubs.push({id,n,causes:[d.kc],m:0,c:(CAUSE[d.kc]||{}).fg||'#3E8957',about:d.ka.trim(),mine:true,open:d.ko==='open',status:'live',samakor:isSamakor()});S.joined.push(id);S.sheet=null;S.draft={};
   notify(cr?`${n} was sent to Samaky for review. We’ll let you know when it’s live.`:`${n} is live. Invite friends and sign up for group shifts together.`,cr?'clock':'people','profile');toast(cr?'Sent for review':`${n} created`)},
  clubjoin(v){const cl=allClubs().find(x=>x.id===v);if(!cl||S.joined.includes(v))return;S.joined.push(v);if(v==='green-thumbs')S.club=true;notify(`You joined ${cl.n}. Their group shifts will show up on Home.`,'people','home');toast(`Joined ${cl.n}`)},
- sch(){trk('opened_school_view');S.schoolV=true;S.np=false;S.sheet=null},
+ sch(){trk('opened_school_view');ctag('opened_demo_view','yes');S.schoolV=true;S.np=false;S.sheet=null},
  schback(){S.schoolV=false;S.view='profile';S.sheet=null},
  schtab(v){S.schTab=v},
  schstu(v){S.sheet={t:'stu',id:v}},
@@ -1528,14 +1526,14 @@ const A={
  mode(v){S.mode=v;S.mapSel=null},
  pin(v){S.mapSel=v},
  unpin(){S.mapSel=null},
- maky(){S.sheet={t:'maky'}},
+ maky(){trk('opened_maky');S.sheet={t:'maky'}},
  board(){S.sheet={t:'board'}},
  joinclub(){S.club=true;if(!S.joined.includes('green-thumbs'))S.joined.push('green-thumbs');notify('You joined Green Thumbs. Your Hunger hours now count in the Fall Hunger Challenge.','people','home')},
  quiz(){S.quizA=[];S.sheet={t:'quiz'}},
  qans(v){S.quizA.push(+v);if(S.quizA.length===QUIZ.length){const c=[0,0,0,0];S.quizA.forEach(a=>c[a]++);S.house=HOUSES[c.indexOf(Math.max(...c))].n}},
  notif(v){const n=S.notifs.find(x=>String(x.id)===v);if(n){n.read=true;if(n.go){if(String(n.go).startsWith('chal:')){S.chPrev=S.view;S.chal=n.go.slice(5);S.view='challenge'}else go(n.go)}}},
  readall(){S.notifs.forEach(n=>n.read=true)},
- np(){S.np=true;S.sheet=null},
+ np(){trk('opened_nonprofit_view');ctag('opened_demo_view','yes');S.np=true;S.sheet=null},
  nptab(v){S.npTab=v},
  rbnew(){const elig=Object.keys(S.signups).filter(k=>['checked','pending','verified'].includes(S.signups[k])&&opp(k));S.formErr='';S.draft={rs:elig[0]||'',rt:'mileage',rm:'',ra:'',rr:'',rn:''};S.sheet={t:'rb'}},
  rbsend(){const d=S.draft;S.formErr='';const o=opp(d.rs);if(!o)return S.formErr='Pick the shift you traveled to.';const amt=rbAmount();
@@ -1557,7 +1555,7 @@ const A={
  calmonth(v){S.calM=Math.min(11,Math.max(0,S.calM+ +v));S.calD=`2026-${String(S.calM+1).padStart(2,'0')}-01`;if(S.calM===TODAY_M)S.calD=TODAY},
  calday(v){S.calD=v},
  caltoday(){S.calM=TODAY_M;S.calD=TODAY},
- qr(){S.sheet={t:'qr'}},
+ qr(){trk('opened_my_qr');S.sheet={t:'qr'}},
  stageinfo(v){S.sheet={t:'stage',id:v}},
  lotusinfo(){S.sheet={t:'lotus'}},
  chal(v){if(!['challenge','detail'].includes(S.view))S.chPrev=S.view;S.view='challenge';S.chal=v;S.sheet=null},
