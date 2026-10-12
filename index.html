@@ -247,7 +247,6 @@ select.input{padding:0 10px;font-size:15px}
         <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
       </div>
     </div>
-    <button class="restart" id="restart" data-a="reset">Restart from the beginning</button>
   </div>
 </div>
 
@@ -1392,7 +1391,7 @@ function renderTasks(){const ids=Object.values(S.signups);const t=[
  ['Find your new hours and Lotus progress',S.sawProfile],
  ['Pitch a project for the senior housing challenge',S.pitches.some(p=>p.mine)],
  ['Link a @stthomas.edu email, then approve your hours in the school view',Object.values(S.schAppr).includes('approved')]];
- document.getElementById('restart').textContent=S.resetArm?'Tap again to restart':'Restart from the beginning'}
+}
 function fit(){const d=document.getElementById('device');if(matchMedia('(max-width:500px) and (pointer:coarse)').matches){d.style.removeProperty('--s');return}
  const s=Math.max(.5,Math.min(1,(innerHeight-48-54)/844,(innerWidth-32)/390));d.style.setProperty('--s',s.toFixed(3))}
 addEventListener('resize',fit);
@@ -1527,7 +1526,7 @@ const A={
  loginback(){S.auth=null;S.obErr=''},
  loginsend(){const e=document.getElementById('li-email').value.trim();if(!/^\S+@\S+\.\S+$/.test(e)){S.obErr='Enter a valid email address.';return}S.obErr='';S.loginEmail=e;S.loginSent=true},
  loginok(){S.loginSent=false;S.auth=null;if(S.name&&S.email){S.loggedOut=false;S.onboarded=true;S.view='home';trk('logged_in');ctag('has_account','yes');toast(`Welcome back, ${S.name}`)}else{S.ob=0;toast('No account on this phone yet. Tap Explore, then Sign Up on any opportunity.')}},
- logout(){trk('logged_out');S.loggedOut=true;S.onboarded=true;S.auth=null;S.menu=false;S.sheet=null;S.np=false;S.schoolV=false;S.view='home';toast('You’re signed out. Browsing as a guest.')},
+ logout(){trk('logged_out');S.loggedOut=true;S.onboarded=false;S.ob=0;S.auth=null;S.menu=false;S.sheet=null;S.np=false;S.schoolV=false;S.adminV=false;S.view='home'},
  open(v){if(S.view!=='detail')S.prev=S.view;S.view='detail';S.detail=v;S.sheet=null},
  back(){S.view=S.prev&&S.prev!=='detail'?S.prev:'home'},
  signup(v){if(!loggedIn()){openAcct({t:'signup',v});return}if(needParent()){S.pendingSignup=v;S.formErr='';S.draft={gn:S.pName,ge:S.gEmail};S.sheet={t:'parent'};return}doSignup(v)},
