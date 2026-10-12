@@ -485,7 +485,7 @@ const totalH=()=>ver().reduce((a,k)=>a+hrs(k),0)+clubHrs()+(S.bonusH||0);
 const orgs=()=>new Set(ver().map(k=>opp(k).org)).size;
 const totalXP=()=>Math.round(totalH()*100)+50*orgs();
 function stage(){const h=totalH();let cur=null;STAGES.forEach(s=>{if(h>=s.h)cur=s});const next=STAGES.find(s=>h<s.h);const base=cur?cur.h:0;
- return{h,cur,next,pct:next?Math.max(2,(h-base)/(next.h-base)*100):100,label:cur?cur.n+(cur.p?' · '+cur.p:''):'New Samakian',toNext:next?fmt(next.h-h):'0',xpNext:next?Math.round((next.h-h)*100).toLocaleString():'0'}}
+ return{h,cur,next,pct:next?Math.max(2,(h-base)/(next.h-base)*100):100,label:cur?cur.n+(cur.p?' · '+cur.p:''):'New',toNext:next?fmt(next.h-h):'0',xpNext:next?Math.round((next.h-h)*100).toLocaleString():'0'}}
 function age(){if(!S.birth)return null;const b=new Date(S.birth+'T00:00:00'),n=new Date();let a=n.getFullYear()-b.getFullYear();const m=n.getMonth()-b.getMonth();if(m<0||(m===0&&n.getDate()<b.getDate()))a--;return a}
 const minor=()=>{const a=age();return a!==null&&a<18};
 /* per-shift parental consent: under-18s need a parent's OK on every shift, emailed by the nonprofit */
