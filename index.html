@@ -521,7 +521,7 @@ function smallCard(o){const s=S.signups[o.id];return `<button class="card" style
 function ensureCauses(){S.customCauses.forEach(x=>{if(!CAUSE[x.n])CAUSE[x.n]={bg:x.c,fg:x.c}})}
 function myCauses(){const all=[...CAUSES,...S.customCauses.map(x=>x.n)];const o=(S.causeOrder||[...S.causes,...CAUSES.filter(c=>!S.causes.includes(c))]).filter(c=>all.includes(c)&&!S.hiddenCauses.includes(c));all.forEach(c=>{if(!o.includes(c)&&!S.hiddenCauses.includes(c))o.push(c)});return o}
 const initials=n=>n.split(/\s+/).filter(Boolean).map(w=>w[0]).join('').slice(0,2).toUpperCase();
-function clubCard(cl,why){const j=S.joined.includes(cl.id);return `<div class="box stack g8" style="padding:12px 14px"><div class="row g12"><span style="width:44px;height:44px;flex:0 0 44px;border-radius:22px;background:${cl.c};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">${esc(initials(cl.n))}</span><span class="stack g4" style="flex:1;min-width:0"><b style="font-size:15px">${esc(cl.n)}</b><span class="xs q">${cl.m+(j?1:0)} member${cl.m+(j?1:0)===1?'':'s'} · ${cl.causes.slice(0,3).join(', ')}${cl.mine&&!cl.open?' · Invite only':''}</span></span>${cl.mine?(cl.status==='review'?'<span class="chip wait">In review</span>':'<span class="chip ok">You lead</span>'):j?'<span class="chip ok">Joined</span>':`<button class="btn small" data-a="clubjoin" data-v="${cl.id}">Join</button>`}</div><p class="sm" style="margin:0;line-height:1.45">${esc(why||cl.about)}</p></div>`}
+function clubCard(cl,why){const j=S.joined.includes(cl.id);return `<div class="box stack g8" style="padding:12px 14px"><div class="row g12"><span style="width:44px;height:44px;flex:0 0 44px;border-radius:22px;background:${cl.c};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">${esc(initials(cl.n))}</span><span class="stack g4" style="flex:1;min-width:0"><b style="font-size:15px">${esc(cl.n)}</b><span class="xs q">Members: ${cl.m+(j?1:0)} · ${cl.causes.slice(0,3).join(', ')}${cl.mine&&!cl.open?' · Invite only':''}</span></span>${cl.mine?(cl.status==='review'?'<span class="chip wait">In review</span>':'<span class="chip ok">You lead</span>'):j?'<span class="chip ok">Joined</span>':`<button class="btn small" data-a="clubjoin" data-v="${cl.id}">Join</button>`}</div><p class="sm" style="margin:0;line-height:1.45">${esc(why||cl.about)}</p></div>`}
 /* cause matching: Maky AI picks only from verified Samaky data; falls back to simple matching */
 function ruleMatch(c){const k=c.toLowerCase();const hit=t=>t.toLowerCase().includes(k)||k.split(/\s+/).some(w=>w.length>3&&t.toLowerCase().includes(w));
  const opps=OPPS.filter(o=>o.cause===c||hit(o.title+' '+o.about)).slice(0,4).map(o=>({id:o.id,why:`A verified ${o.cause.toLowerCase()} shift with ${o.org}.`}));
@@ -843,7 +843,7 @@ function syncBlock(){return S.calSync?`<button class="box row g10" style="paddin
 /* ---------- Samaky Creators (Samakor) ---------- */
 const BUD_H=66;const CLUB_H=12;
 const isSamakor=()=>S.creator&&S.creator.status==='samakor';
-const canLead=()=>totalH()>=CLUB_H||isSamakor();
+const canLead=()=>true;
 const EVENT_TYPES=['Cleanup','Gardening','Murals & art','Food','Elders','Youth','Other'];
 const SAMPLE_APPS=[
  {id:'marisol',name:'Marisol Vega',role:'leader',org:'Lake Street Cleanup Crew',bio:'I’ve run Saturday litter pickups on Lake Street since 2021. About 15 neighbors show up each week.',links:'instagram.com/lakestreetcleanup',types:['Cleanup','Gardening']},
@@ -1361,7 +1361,7 @@ function renderSheet(){const sh=S.sheet;if(!sh){lastSheet='';return ''}const sk=
   ${sel('kc','Main cause',myCauses().map(x=>[x,x]))}
   ${area('ka','What will your club do?','e.g. Tutor kids twice a month and run a book drive in spring.',84)}
   ${segf('ko','Who can join?',[['open','Anyone'],['invite','Invite only']])}
-  <p class="xs q" style="margin:0;line-height:1.45">${isSamakor()?'As a Verified Samakor, your club shows your badge.':`You unlocked clubs by reaching Seed (${CLUB_H} verified hours).`}</p>
+  ${isSamakor()?'<p class="xs q" style="margin:0;line-height:1.45">As a Verified Samakor, your club shows your badge.</p>':''}
   ${ferr()}<button class="btn block" data-a="clubsend">Create club</button>${close}</div>`}
  if(sh.t==='npp'){const n=NONPROFITS.find(x=>x.n===sh.id);if(n){const ops=OPPS.filter(o=>o.org===n.n);const fol=S.follow.includes(n.n);const col=(CAUSE[n.cat]||{}).fg||'#3E8957';
   c=`<div class="stack g16"><div class="row g12"><span style="width:56px;height:56px;flex:0 0 56px;border-radius:28px;background:${col};color:#FFFFFF;display:flex;align-items:center;justify-content:center">${ic(n.cat,26,2)}</span><div class="stack g4" style="min-width:0"><h2 class="disp" style="font-size:22px;line-height:1.15">${esc(n.n)}</h2><span class="row g4 xs" style="color:#2F6E46;font-weight:700">${ic('check',13,2.8)} Verified ${n.type} · IRS records checked</span></div></div>
@@ -1626,7 +1626,7 @@ const A={
   const ex=[...CAUSES,...S.customCauses.map(x=>x.n)].find(x=>x.toLowerCase()===n.toLowerCase());const sel=S.draft.sel||[];
   if(ex){if(!sel.includes(ex))S.draft.sel=[...sel,ex];}else{S.customCauses.push({n,c:CUSTOM_COLORS[S.customCauses.length%CUSTOM_COLORS.length]});ensureCauses();S.hiddenCauses=[...S.hiddenCauses.filter(x=>x!==n),n];S.draft.sel=[...sel,n]}
   S.draft.nc='';S.draft.addOpen=false},
- clubnew(){if(!canLead()){toast(`Start a club unlocks at Seed (${CLUB_H} verified hours)`);return false}S.formErr='';S.draft={kn:'',kc:myCauses()[0]||'Hunger',ka:'',ko:'open',kw:isSamakor()?'creator':'student'};S.sheet={t:'club'}},
+ clubnew(){if(!loggedIn()){openAcct(null);return}S.formErr='';S.draft={kn:'',kc:myCauses()[0]||'Hunger',ka:'',ko:'open',kw:isSamakor()?'creator':'student'};S.sheet={t:'club'}},
  clubsend(){const d=S.draft;S.formErr='';const n=(d.kn||'').trim();if(n.length<3)return S.formErr='Give your club a name.';if(allClubs().some(x=>x.n.toLowerCase()===n.toLowerCase()))return S.formErr='A club with that name already exists. Try another name.';if((d.ka||'').trim().length<15)return S.formErr='Say in a sentence what your club will do.';
   const id='u'+Date.now();const cr=false;S.myClubs.push({id,n,causes:[d.kc],m:0,c:(CAUSE[d.kc]||{}).fg||'#3E8957',about:d.ka.trim(),mine:true,open:d.ko==='open',status:'live',samakor:isSamakor()});S.joined.push(id);S.sheet=null;S.draft={};
   notify(cr?`${n} was sent to Samaky for review. We’ll let you know when it’s live.`:`${n} is live. Invite friends and sign up for group shifts together.`,cr?'clock':'people','profile');toast(cr?'Sent for review':`${n} created`)},
