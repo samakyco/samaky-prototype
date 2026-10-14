@@ -611,8 +611,8 @@ const makyPick=()=>sorted().find(o=>!S.signups[o.id]&&!o.remote)||sorted().find(
 /* ---------- onboarding ---------- */
 const OB_SLIDES=[
  {img:()=>PHOTO,pos:'center 20%',h:'It’s friction, not character.',p:'Most people want to help. Samaky makes it easy to find a shift with a verified nonprofit, show up, and get your hours confirmed.',b:'Get started'},
- {img:()=>PHOTO_B,pos:'center 30%',h:'One Profile.<br><span style="white-space:nowrap">Many Matches.</span>',p:'Build one profile and access to verified volunteer opportunities on Samaky based on your interests.',b:'I’m in'},
- {img:()=>PHOTO_C,pos:'center 40%',h:'Catalyzing Kindness.',p:'We make kindness easy — one place to find volunteer opportunities and show up for your community.',b:'Explore Now'}];
+ {img:()=>PHOTO_B,pos:'center 30%',h:'One Profile.<br><span style="white-space:nowrap">Many Matches.</span>',p:'Build one profile and access to verified volunteer opportunities on Samaky based on your interests.',b:'I’m interested'},
+ {img:()=>PHOTO_C,pos:'center 40%',h:'Catalyzing Kindness.',p:'We make kindness easy — one place to find volunteer opportunities and show up for your community.',b:'Explore now'}];
 function obDots(i){return OB_SLIDES.map((_,k)=>`<i style="width:${k===i?22:8}px;height:8px;border-radius:4px;background:${k===i?'#F5C842':'rgba(255,255,255,.45)'};display:block;transition:width .3s,background .3s"></i>`).join('')}
 function renderOb(){const step=Math.min(Math.max(S.ob|0,0),2);S.ob=step;
  const slide=(d,k)=>{const bg=d.maky?'background:linear-gradient(180deg,#2F6E46 0%,#1F4D33 62%,#12301F 100%)':`background:#1A1A1A url('${d.img()}') ${d.pos}/cover no-repeat`;
@@ -660,8 +660,8 @@ function vHome(){const st=stage();const pick=makyPick();
  return `${pageHead('Home')}<div class="pad" style="padding-top:16px;padding-bottom:4px">${corpSection()}</div><section class="hero" style="margin-top:16px;padding:24px 20px;display:flex;align-items:center"><h2 class="disp h1" style="margin:0">Hello, ${loggedIn()?esc(S.name):'Samakian'}!</h2></section>
   <div class="stack g20 pad" style="padding-block:20px 110px">${consentBanner}${nextCard}${pickCard}
   ${S.challenges.length?`<section class="stack g10"><div class="stack g4"><h2 class="disp h2">Open challenges</h2><span class="sm q">A nonprofit names a problem. You pitch the project.</span></div>${S.challenges.map(chCard).join('')}</section>`:''}
-  ${feedSection()}
   <section class="stack g10"><div class="row between"><h2 class="disp h2">More near you</h2><button class="link" data-a="nav" data-v="search">See all</button></div><div class="hscroll" style="margin-inline:-20px;padding-inline:20px">${rest.map(smallCard).join('')}</div></section>
+  ${feedSection()}
   </div>`}
 
 
