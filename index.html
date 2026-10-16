@@ -25,7 +25,7 @@
 <body>
 <title>Samaky: Catalyzing Kindness</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Poppins:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: a phone frame centered on a desk surface, with a test-script panel beside it on wide screens; full-screen app on phones. Single brand theme by choice. */
 :root{
@@ -34,7 +34,7 @@
   --quiet:#5C564C; --line:#E4DCCB; --desk:#E2DACB; --bezel:#18201B; --warn-bg:#FDE8CC; --warn-ink:#7C3A06;
   --bad-bg:#F8DCD6; --bad-ink:#8C2A17; --blue:#2563EB; --alert:#C2410C; --scrim:rgba(20,26,22,.48);
   --on-dark:#FFFFFF; --on-dark-quiet:#D6EBDD; --map:#ECE6D9; --road:#FFFDF8; --water:#BBD7E6; --park:#D3E3C8;
-  --display:'Fraunces',Georgia,'Times New Roman',serif; --body:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --display:'Fraunces',Georgia,'Times New Roman',serif; --body:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;
   --tabh:84px; color-scheme:light;
 }
 html,body{height:100%}
@@ -913,13 +913,13 @@ const qrSeed=()=>Math.floor(Date.now()/10000);
 const storyCache={};
 function genStory(e){if(storyCache[e.id+e.date+e.place])return Promise.resolve(storyCache[e.id+e.date+e.place]);return new Promise(res=>{const cv=document.createElement('canvas');cv.width=1080;cv.height=1920;const x=cv.getContext('2d');
  x.fillStyle='#1F4D33';x.fillRect(0,0,1080,1920);x.fillStyle='#2F6E46';x.beginPath();x.arc(980,240,360,0,7);x.fill();x.fillStyle='#173B27';x.beginPath();x.arc(80,1780,300,0,7);x.fill();
- const draw=()=>{x.fillStyle='#64D88B';x.font='700 40px "DM Sans",sans-serif';x.fillText('SAMAKY CREATORS · VERIFIED SAMAKOR',90,330);
+ const draw=()=>{x.fillStyle='#64D88B';x.font='700 40px "Poppins",sans-serif';x.fillText('SAMAKY CREATORS · VERIFIED SAMAKOR',90,330);
   x.fillStyle='#FFFFFF';x.font='600 112px Fraunces,Georgia,serif';const words=e.title.split(' ');let line='',y=470;words.forEach(w=>{const t=line?line+' '+w:w;if(x.measureText(t).width>900){x.fillText(line,90,y);y+=124;line=w}else line=t});x.fillText(line,90,y);
-  x.font='500 52px "DM Sans",sans-serif';x.fillStyle='#F5F0E8';y+=110;x.fillText(dLabel(e.date,{weekday:'long',month:'long',day:'numeric'}),90,y);y+=72;x.fillText(`${e.time} – ${tAdd(e.time,e.dur)}`,90,y);y+=72;x.fillText(e.place,90,y);
-  x.fillStyle='#F5C842';x.font='700 44px "DM Sans",sans-serif';y+=96;x.fillText(`Hosted by ${fullName()||'a Samakor'}`,90,y);
+  x.font='500 52px "Poppins",sans-serif';x.fillStyle='#F5F0E8';y+=110;x.fillText(dLabel(e.date,{weekday:'long',month:'long',day:'numeric'}),90,y);y+=72;x.fillText(`${e.time} – ${tAdd(e.time,e.dur)}`,90,y);y+=72;x.fillText(e.place,90,y);
+  x.fillStyle='#F5C842';x.font='700 44px "Poppins",sans-serif';y+=96;x.fillText(`Hosted by ${fullName()||'a Samakor'}`,90,y);
   const qy=1180,qs=520,qx=(1080-qs)/2;x.fillStyle='#FFFFFF';x.beginPath();x.roundRect?x.roundRect(qx-40,qy-40,qs+80,qs+80,48):x.rect(qx-40,qy-40,qs+80,qs+80);x.fill();
   const g=qrMatrix(parseInt(samCode(),36)),n=g.length,c=qs/n;x.fillStyle='#1A1A1A';g.forEach((row,i)=>row.forEach((v,j)=>{if(v)x.fillRect(qx+j*c,qy+i*c,Math.ceil(c),Math.ceil(c))}));
-  x.fillStyle='#FFFFFF';x.font='700 46px "DM Sans",sans-serif';x.textAlign='center';x.fillText('Scan to join · no app needed',540,1830);x.font='500 36px "DM Sans",sans-serif';x.fillStyle='#BFE3CB';x.fillText(`samaky.co/s/${samCode()}`,540,1885);
+  x.fillStyle='#FFFFFF';x.font='700 46px "Poppins",sans-serif';x.textAlign='center';x.fillText('Scan to join · no app needed',540,1830);x.font='500 36px "Poppins",sans-serif';x.fillStyle='#BFE3CB';x.fillText(`samaky.co/s/${samCode()}`,540,1885);
   const u=cv.toDataURL('image/png');storyCache[e.id+e.date+e.place]=u;res(u)};
  const im=new Image();im.onload=()=>{const h=72,w=im.width/im.height*h;x.drawImage(im,90,140,w,h);draw()};im.onerror=draw;im.src=LOGO_W})}
 function fillStory(){const e=S.sheet&&S.sheet.t==='samshare'&&cev(S.sheet.id);if(!e)return;genStory(e).then(u=>{['storyimg','storybig'].forEach(i=>{const im=document.getElementById(i);if(im)im.src=u});const a=document.getElementById('storydl');if(a){a.href=u;a.removeAttribute('aria-disabled')}})}
@@ -1258,7 +1258,7 @@ function vNP(){const mine=Object.keys(S.signups).map(k=>({id:'me:'+k,name:(fullN
  const row=v=>`<div class="box stack g10" style="padding:14px"><div class="row between g8"><span class="stack g4"><b>${esc(v.name)}</b>${v.imported?'<span class="xs" style="color:var(--green);font-weight:700">Imported sign-up</span>':''}<span class="xs q">${opp(v.opp).title} · ${opp(v.opp).day}${v.me&&minor()?` · Parent ${{approved:'approved',pending:'not yet approved',declined:'declined'}[pcOf(v.opp)]}`:''}</span></span>${v.status==='pending'?`<div class="stepper"><button aria-label="Fewer hours" data-a="npadj" data-v="${v.id}|-0.5">−</button><span class="tnum" style="min-width:44px;text-align:center;font-weight:700">${fmt(v.hours)} h</span><button aria-label="More hours" data-a="npadj" data-v="${v.id}|0.5">+</button></div>`:statusChip(v.status)}</div>
   ${v.status==='pending'?`<div class="row g8"><button class="btn small" style="flex:1" data-a="npverify" data-v="${v.id}">Verify</button><button class="btn small ghost" data-a="npnoshow" data-v="${v.id}">No-show</button></div>`:''}${['signed','checked'].includes(v.status)?`<button class="btn small soft" data-a="nppresent" data-v="${v.id}">Mark present</button>`:''}</div>`;
  const review=S.pitches.filter(p=>p.status==='review'&&chal(p.ch)&&chal(p.ch).org===NP_ORG).length;
- const tabs=`<div class="seg" role="group" aria-label="Sections" style="display:grid;grid-template-columns:1.05fr 1.05fr 1.2fr .8fr">${[['hours','Volunteers'],['opps','Campaigns'],['chal','Challenges'],['prof','Profile']].map(([k,l])=>`<button aria-pressed="${S.npTab===k}" data-a="nptab" data-v="${k}" style="padding:0 2px;font-size:13.5px;position:relative">${l}${k==='chal'&&review?`<span style="position:absolute;top:1px;right:0;width:16px;height:16px;border-radius:8px;background:#C2410C;color:#FFFFFF;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1">${review}</span>`:''}</button>`).join('')}</div>`;
+ const tabs=`<div class="seg" role="group" aria-label="Sections" style="display:grid;grid-template-columns:1.05fr 1.05fr 1.2fr .8fr">${[['hours','Volunteers'],['opps','Campaigns'],['chal','Challenges'],['prof','Profile']].map(([k,l])=>`<button aria-pressed="${S.npTab===k}" data-a="nptab" data-v="${k}" style="padding:0 2px;font-size:12.5px;letter-spacing:-.01em;position:relative">${l}${k==='chal'&&review?`<span style="position:absolute;top:0;right:-2px;width:16px;height:16px;border-radius:8px;background:#C2410C;color:#FFFFFF;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1">${review}</span>`:''}</button>`).join('')}</div>`;
  const head=`<div class="scroll full" id="scroll"><header class="stack g10" style="background:var(--ink);color:var(--on-dark);padding:24px 20px 20px"><button class="row g6" style="background:none;border:none;color:var(--mint);font-weight:700;padding:0;min-height:44px" data-a="student">${ic('back',18,2)} Back to student view</button><span class="xs" style="letter-spacing:.08em;color:#BFC8C2">NONPROFIT VIEW</span><div class="row g12"><span style="width:44px;height:44px;flex:0 0 44px;border-radius:22px;background:var(--mint);color:var(--green-deep);display:flex;align-items:center;justify-content:center;font-weight:700">ES</span><span class="stack g4"><h1 class="disp" style="font-size:24px">${NP_ORG}</h1><span class="xs" style="color:#BFC8C2">Verified 501(c)(3)</span></span></div></header>
  <div class="stack g20 pad" style="padding-block:16px 40px">${tabs}`;
  if(S.npTab==='opps')return head+npOpps()+`</div></div>${renderSheet()}`;
